@@ -1,0 +1,135 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{!title ? 'New transaction' : 'Edit transaction'}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form
+    [formGroup]="transactionForm"
+    (ngSubmit)="!title ? onAddTransaction() : onUpdateTransaction()"
+  >
+    <ion-grid>
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-item>
+            <ion-label position="floating">Type:</ion-label>
+            <ion-select name="type" required formControlName="type" (ionChange)="onTypeChange($event)">
+              <ion-select-option
+                *ngFor="let type of transactionTypes"
+                [value]="type"
+                >{{type}}</ion-select-option
+              >
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngIf="(transactionForm.get('type').invalid && !transactionForm.get('type').touched) && transactionForm.get('type').dirty"
+      >
+        <ion-col size-sm="6" offset-sm="3">
+          <span>Please choose a transaction type.</span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-item>
+            <ion-label position="floating">Purpose:</ion-label>
+            <ion-input
+              type="text"
+              required
+              formControlName="purpose"
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngIf="transactionForm.get('purpose').invalid && transactionForm.get('purpose').touched"
+      >
+        <ion-col size-sm="6" offset-sm="3">
+          <span>Purpose must contain at least 1 character.</span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-item>
+            <ion-label position="floating">Amount:</ion-label>
+            <ion-input
+              type="number"
+              required
+              formControlName="amount"
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngIf="transactionForm.get('amount').invalid && transactionForm.get('amount').touched"
+      >
+        <ion-col size-sm="6" offset-sm="3">
+          <span *ngIf="transactionForm.get('amount').hasError('required')">Amount must contain at least 1 digit.</span>
+          <span *ngIf="transactionForm.get('amount').hasError('min')">Amount must be greater than 0.</span>
+          <span *ngIf="transactionForm.get('amount').hasError('max') && transactionForm.get('type').value == transactionTypes[1]">Your current balance ({{balance}} RSD) is less than withdrawal amount.</span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-item>
+            <ion-label position="fixed">Date:</ion-label>
+            <ion-input type="date" required formControlName="date"></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngIf="transactionForm.get('date').invalid && transactionForm.get('date').touched"
+      >
+        <ion-col size-sm="6" offset-sm="3">
+          <span>Please enter a valid date.</span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-item>
+            <ion-label position="floating">Picture URL:</ion-label>
+            <ion-input
+              type="text"
+              required
+              formControlName="pictureUrl"
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngIf="transactionForm.get('pictureUrl').invalid && transactionForm.get('pictureUrl').touched"
+      >
+        <ion-col size-sm="6" offset-sm="3">
+          <span>Please enter a valid picture url.</span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-button
+            type="submit"
+            color="primary"
+            expand="block"
+            [disabled]="transactionForm.invalid || !transactionForm.touched"
+          >
+            {{!title ? 'Add' : 'Edit'}}
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>
