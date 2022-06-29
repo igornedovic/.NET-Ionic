@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BudgetManagementBackend.Data.Interfaces;
 using BudgetManagementBackend.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetManagementBackend.API.Controllers
@@ -21,7 +22,9 @@ namespace BudgetManagementBackend.API.Controllers
 
         // GET api/transaction
         [HttpGet]
-        public List<Transaction> GetAllTransactionsByUser() {
+        [Authorize(Roles = "User")]
+        public List<Transaction> GetAllTransactionsByUser()
+        {
             return transactionService.GetAllTransactionByUser();
         }
     }

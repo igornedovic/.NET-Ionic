@@ -6,12 +6,16 @@ namespace BudgetManagementBackend.Data
 {
     public class BudgetDbContext : DbContext
     {
+
+        public BudgetDbContext(DbContextOptions<BudgetDbContext> options) : base(options)
+        {
+            
+        }
         public DbSet<User> Users { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=BudgetManagement;Trusted_Connection=True;");
             optionsBuilder.LogTo(Console.WriteLine);
             optionsBuilder.EnableSensitiveDataLogging(true);
         }
