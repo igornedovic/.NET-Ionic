@@ -1,3 +1,7 @@
+using BudgetManagementBackend.Data;
+using BudgetManagementBackend.Data.Interfaces;
+using BudgetManagementBackend.Services.Services;
+using BudgetManagementBackend.Services.UnitOfWork;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,10 +32,10 @@ namespace BudgetManagementBackend.API
         {
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "BudgetManagementBackend.API", Version = "v1" });
-            });
+
+            services.AddDbContext<BudgetDbContext>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ITransactionService, TransactionService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,8 +44,6 @@ namespace BudgetManagementBackend.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "BudgetManagementBackend.API v1"));
             }
 
             app.UseHttpsRedirection();
