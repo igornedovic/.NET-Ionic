@@ -15,8 +15,10 @@ namespace BudgetManagementBackend.Services.Services
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
-        public UserService(IUnitOfWork uow, IMapper mapper)
+        private readonly ITokenService _tokenService;
+        public UserService(IUnitOfWork uow, IMapper mapper, ITokenService tokenService)
         {
+            _tokenService = tokenService;
             _mapper = mapper;
             _uow = uow;
 
@@ -25,11 +27,6 @@ namespace BudgetManagementBackend.Services.Services
         public bool CheckUsername(string username)
         {
             return _uow.UserRepository.CheckUsername(username);
-        }
-
-        public UserReadDto Login(string username)
-        {
-            throw new NotImplementedException();
         }
 
         public UserReadDto Register(UserCreateDto userCreateDto)
@@ -43,11 +40,35 @@ namespace BudgetManagementBackend.Services.Services
 
             var registeredUser = _uow.UserRepository.Create(user);
 
-            if (registeredUser != null) {
+            if (registeredUser != null)
+            {
                 return _mapper.Map<UserReadDto>(registeredUser);
             }
 
             return null;
         }
+        public User GetUserByUsername(string username)
+        {
+            return _uow.UserRepository.GetUserByUsername(username);
+        }
+
+        public UserReadDto Login(User user, string password)
+        {
+            using var hmac = new HMACSHA512(user.PasswordSalt);
+
+            byte[] computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+
+            for (int i = 0; i < computedHash.Length; i++) {
+                if (computedHash[i] != user.PasswordHash[i]) return null;
+            }
+
+            var token = _tokenService.CreateToken(user);
+
+            var loggedInUser = _mapper.Map<UserReadDto>(user);
+            loggedInUser.Token = token;
+
+            return loggedInUser;
+        }
     }
+
 }

@@ -7,7 +7,6 @@ namespace BudgetManagementBackend.Data.Interfaces
 {
     public interface IRepository<T> where T : class
     {
-        public List<T> GetAllByUser();
         public T Create(T t);
     }
 }

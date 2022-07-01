@@ -10,7 +10,8 @@ namespace BudgetManagementBackend.Data.Interfaces
     public interface IUserService
     {
         public UserReadDto Register(UserCreateDto user);
-        public UserReadDto Login(string username);
         public bool CheckUsername(string username);
+        public User GetUserByUsername(string username);
+        public UserReadDto Login(User user, string password);
     }
 }

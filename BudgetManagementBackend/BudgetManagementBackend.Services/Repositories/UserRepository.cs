@@ -45,9 +45,17 @@ namespace BudgetManagementBackend.Services.Repositories
             }
         }
 
-        public List<User> GetAllByUser()
+        public User GetUserByUsername(string username)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return _context.Users.SingleOrDefault(u => u.Username == username);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
         }
     }
 }

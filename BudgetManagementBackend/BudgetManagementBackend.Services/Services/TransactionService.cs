@@ -15,9 +15,11 @@ namespace BudgetManagementBackend.Services.Services
         {
             this.uow = uow;
         }
+
         public List<Transaction> GetAllTransactionByUser()
         {
-            return uow.TransactionRepository.GetAllByUser();
+            throw new NotImplementedException();
         }
+
     }
 }

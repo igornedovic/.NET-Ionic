@@ -9,5 +9,6 @@ namespace BudgetManagementBackend.Data.Interfaces
     public interface IUserRepository : IRepository<User>
     {
         public bool CheckUsername(string username);
+        public User GetUserByUsername(string username);
     }
 }
