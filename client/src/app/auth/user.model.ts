@@ -6,7 +6,7 @@ export class User {
     public firstName: string,
     public lastName: string,
     public role: string,
-    private _token: string,
+    private _token: string
   ) {}
 
   get token() {

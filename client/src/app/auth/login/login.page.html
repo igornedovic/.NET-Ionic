@@ -34,14 +34,13 @@
       <ion-row>
         <ion-col sizeSm="6" offsetSm="3">
           <ion-item>
-            <ion-label position="floating">Email</ion-label>
+            <ion-label position="floating">Username</ion-label>
             <ion-input
-              type="email"
+              type="username"
               ngModel
-              name="email"
-              email
+              name="username"
               required
-              #email="ngModel"
+              #username="ngModel"
             ></ion-input>
           </ion-item>
         </ion-col>
@@ -49,8 +48,8 @@
 
       <ion-row>
         <ion-col sizeSm="6" offsetSm="3">
-          <ion-item lines="none" *ngIf="email.invalid && email.touched">
-            <ion-label>Email address is not in valid format.</ion-label>
+          <ion-item lines="none" *ngIf="username.invalid && username.touched">
+            <ion-label>Username must contain at least 1 character.</ion-label>
           </ion-item>
         </ion-col>
       </ion-row>

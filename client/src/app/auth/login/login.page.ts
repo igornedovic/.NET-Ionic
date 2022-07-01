@@ -27,7 +27,7 @@ export class LoginPage implements OnInit {
     if (loginForm.valid) {
       this.authService.login(loginForm.value).subscribe(
         (response) => {
-
+          console.log(response);
           this.isLoading = false;
           this.router.navigateByUrl('/home');
         },
@@ -35,11 +35,11 @@ export class LoginPage implements OnInit {
           console.log(error);
 
           this.isLoading = false;
-          let message = 'Incorrect email or password!';
+          let message = error.error;
 
           this.alertCtrl
             .create({
-              header: 'Authentification failed',
+              header: 'Login failed',
               message,
               buttons: ['Okay'],
             })

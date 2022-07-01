@@ -6,7 +6,7 @@ import { User } from './user.model';
 import { BehaviorSubject } from 'rxjs';
 
 interface ResponseData {
-  userId: number;
+  id: number;
   username: string;
   email: string;
   firstName: string;
@@ -82,8 +82,6 @@ export class AuthService {
   }
 
   register(userForm: RequestData) {
-    let user: User;
-
     return this.http.post<ResponseData>(this.baseUrl + 'user/register', {
       username: userForm.username,
       password: userForm.password,
@@ -98,43 +96,23 @@ export class AuthService {
     let user: User;
 
     return this.http
-      .post<ResponseData>(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${environment.firebaseAPIKey}`,
-        {
-          email: userForm.email,
-          password: userForm.password,
-          returnSecureToken: true,
-        }
-      )
-      .pipe(
-        take(1),
-        // switchMap((userData) => {
-        //   const expirationTime = new Date(
-        //     new Date().getTime() + +userData.expiresIn * 1000
-        //   );
+      .post<ResponseData>(this.baseUrl + 'user/login', {
+        username: userForm.username,
+        password: userForm.password,
+      })
+      .pipe(tap((response) => {
+        user = new User(
+          response.id,
+          response.username,
+          response.email,
+          response.firstName,
+          response.lastName,
+          response.role,
+          response.token
+        );
 
-        //   user = new User(
-        //     userData.localId,
-        //     userData.email,
-        //     userData.idToken,
-        //     expirationTime
-        //   );
-
-        //   return this.http.get<UserData>(
-        //     `https://budget-management-3ca84-default-rtdb.europe-west1.firebasedatabase.app/users.json?orderBy="userId"&equalTo="${user.id}"&auth=${user.token}`
-        //   );
-        // }),
-        map((additionalUserData) => {
-          for (const key in additionalUserData) {
-            if (additionalUserData.hasOwnProperty(key)) {
-              user.firstN = additionalUserData[key].firstName;
-              user.lastN = additionalUserData[key].lastName;
-            }
-          }
-
-          this._user.next(user);
-        })
-      );
+        this._user.next(user);
+      }));
   }
 
   logout() {

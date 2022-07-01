@@ -17,14 +17,15 @@ namespace BudgetManagementBackend.API.Controllers
 
         // POST api/user/register
         [HttpPost("register")]
-        public ActionResult<UserReadDto> Register(UserCreateDto userCreateDto) 
+        public ActionResult<UserReadDto> Register(UserCreateDto userCreateDto)
         {
-            if (_userService.CheckUsername(userCreateDto.Username)) 
+            if (_userService.CheckUsername(userCreateDto.Username))
                 return BadRequest("This username already exists!");
-            
+
             var registeredUser = _userService.Register(userCreateDto);
 
-            if (registeredUser != null) {
+            if (registeredUser != null)
+            {
                 return Ok(registeredUser);
             }
 
@@ -35,13 +36,13 @@ namespace BudgetManagementBackend.API.Controllers
         [HttpPost("login")]
         public ActionResult<UserReadDto> Login(LoginDto loginDto)
         {
-            var user = _userService.GetUserByUsername(loginDto.Username); 
+            var user = _userService.GetUserByUsername(loginDto.Username);
 
             if (user == null) return Unauthorized("Invalid username!");
 
             var loggedInUser = _userService.Login(user, loginDto.Password);
 
-            if (loggedInUser == null) return Unauthorized("Invalid password!");
+            if (loggedInUser == null) return Unauthorized("Invalid password for provided username!");
 
             return Ok(loggedInUser);
         }
