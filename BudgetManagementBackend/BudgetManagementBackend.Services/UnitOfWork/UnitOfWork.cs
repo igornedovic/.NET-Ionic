@@ -16,9 +16,10 @@ namespace BudgetManagementBackend.Services.UnitOfWork
         {
             this.context = context;
             TransactionRepository = new TransactionRepository(context);
+            UserRepository = new UserRepository(context);
         }
         public ITransactionRepository TransactionRepository { get; set; }
-
+        public IUserRepository UserRepository { get; set; }
         public void Commit()
         {
             context.SaveChanges();

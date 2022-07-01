@@ -23,7 +23,8 @@ namespace BudgetManagementBackend.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().Property(u => u.Username).IsRequired();
-            modelBuilder.Entity<User>().Property(u => u.Password).IsRequired();
+            modelBuilder.Entity<User>().Property(u => u.PasswordHash).IsRequired();
+            modelBuilder.Entity<User>().Property(u => u.PasswordSalt).IsRequired();
             modelBuilder.Entity<User>().Property(u => u.FirstName).IsRequired();
             modelBuilder.Entity<User>().Property(u => u.LastName).IsRequired();
 

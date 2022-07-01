@@ -8,6 +8,7 @@ namespace BudgetManagementBackend.Data.Interfaces
     public interface IUnitOfWork
     {
         public ITransactionRepository TransactionRepository { get; set; }
+        public IUserRepository UserRepository { get; set; }
         public void Commit();
     }
 }

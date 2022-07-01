@@ -16,6 +16,12 @@ namespace BudgetManagementBackend.Services.Repositories
         {
             this.context = context;
         }
+
+        public Transaction Create(Transaction transaction)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<Transaction> GetAllByUser()
         {
             return new List<Transaction>()

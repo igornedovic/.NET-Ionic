@@ -1,3 +1,4 @@
+using BudgetManagementBackend.API.Helpers;
 using BudgetManagementBackend.Data;
 using BudgetManagementBackend.Data.Interfaces;
 using BudgetManagementBackend.Services.Services;
@@ -44,6 +45,7 @@ namespace BudgetManagementBackend.API
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
 
             services.AddAuthentication(options =>
@@ -63,6 +65,8 @@ namespace BudgetManagementBackend.API
                     };
 
                 });
+            
+            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
