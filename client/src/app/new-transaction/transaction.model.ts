@@ -6,7 +6,7 @@ export class Transaction {
     public amount: number,
     public date: Date,
     public pictureUrl: string,
-    public userId: string
+    public userId: number
   ) {}
 }
 

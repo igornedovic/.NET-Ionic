@@ -34,7 +34,7 @@ export class TransactionService {
   }
 
   addTransaction(transactionData: TransactionData) {
-    let fetchedUserId: string;
+    let fetchedUserId: number;
     let newTransaction: Transaction;
     let generatedId: string;
 
@@ -76,7 +76,7 @@ export class TransactionService {
   }
 
   getTransactions() {
-    let fetchedUserId: string;
+    let fetchedUserId: number;
 
     return this.authService.userId.pipe(
       take(1),
@@ -95,17 +95,17 @@ export class TransactionService {
 
         for (const key in transactionsResponse) {
           if (transactionsResponse.hasOwnProperty(key)) {
-            transactions.push(
-              new Transaction(
-                key,
-                transactionsResponse[key].type,
-                transactionsResponse[key].purpose,
-                +transactionsResponse[key].amount,
-                new Date(transactionsResponse[key].date),
-                transactionsResponse[key].pictureUrl,
-                transactionsResponse[key].userId
-              )
-            );
+            // transactions.push(
+            //   new Transaction(
+            //     key,
+            //     transactionsResponse[key].type,
+            //     transactionsResponse[key].purpose,
+            //     +transactionsResponse[key].amount,
+            //     new Date(transactionsResponse[key].date),
+            //     transactionsResponse[key].pictureUrl,
+            //     transactionsResponse[key].userId
+            //   )
+            // );
           }
         }
 

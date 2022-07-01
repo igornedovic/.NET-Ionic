@@ -5,29 +5,30 @@ import { map, switchMap, take, tap } from 'rxjs/operators';
 import { User } from './user.model';
 import { BehaviorSubject } from 'rxjs';
 
-interface AuthResponseData {
-  kind: string;
-  idToken: string;
+interface ResponseData {
+  userId: number;
+  username: string;
   email: string;
-  refreshToken: string;
-  expiresIn: string;
-  localId: string;
-  registered?: boolean;
+  firstName: string;
+  lastName: string;
+  role: string;
+  token: string;
 }
 
-interface UserData {
-  email: string;
+interface RequestData {
+  username: string;
   password: string;
-  firstName?: string;
-  lastName?: string;
-  balance?: number;
-  userId?: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  baseUrl = environment.apiUrl;
   private _user = new BehaviorSubject<User>(null);
 
   constructor(private http: HttpClient) {}
@@ -80,55 +81,24 @@ export class AuthService {
     );
   }
 
-  register(userForm: UserData) {
+  register(userForm: RequestData) {
     let user: User;
 
-    return this.http
-      .post<AuthResponseData>(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${environment.firebaseAPIKey}`,
-        {
-          email: userForm.email,
-          password: userForm.password,
-          returnSecureToken: true,
-        }
-      )
-      .pipe(
-        take(1),
-        switchMap((userData) => {
-          const expirationTime = new Date(
-            new Date().getTime() + +userData.expiresIn * 1000
-          );
-          user = new User(
-            userData.localId,
-            userData.email,
-            userData.idToken,
-            expirationTime,
-            userForm.firstName,
-            userForm.lastName,
-            0
-          );
-
-          return this.http.post<{ name: string }>(
-            `https://budget-management-3ca84-default-rtdb.europe-west1.firebasedatabase.app/users.json?auth=${user.token}`,
-            {
-              firstName: user.firstName,
-              lastName: user.lastName,
-              userId: user.id,
-            }
-          );
-        }),
-        take(1),
-        tap(() => {
-          this._user.next(user);
-        })
-      );
+    return this.http.post<ResponseData>(this.baseUrl + 'user/register', {
+      username: userForm.username,
+      password: userForm.password,
+      email: userForm.email,
+      firstName: userForm.firstName,
+      lastName: userForm.lastName,
+      role: 'User',
+    });
   }
 
-  login(userForm: UserData) {
+  login(userForm: RequestData) {
     let user: User;
 
     return this.http
-      .post<AuthResponseData>(
+      .post<ResponseData>(
         `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${environment.firebaseAPIKey}`,
         {
           email: userForm.email,
@@ -138,30 +108,27 @@ export class AuthService {
       )
       .pipe(
         take(1),
-        switchMap((userData) => {
-          const expirationTime = new Date(
-            new Date().getTime() + +userData.expiresIn * 1000
-          );
+        // switchMap((userData) => {
+        //   const expirationTime = new Date(
+        //     new Date().getTime() + +userData.expiresIn * 1000
+        //   );
 
-          user = new User(
-            userData.localId,
-            userData.email,
-            userData.idToken,
-            expirationTime,
-          );
+        //   user = new User(
+        //     userData.localId,
+        //     userData.email,
+        //     userData.idToken,
+        //     expirationTime
+        //   );
 
-          return this.http.get<UserData>(
-            `https://budget-management-3ca84-default-rtdb.europe-west1.firebasedatabase.app/users.json?orderBy="userId"&equalTo="${user.id}"&auth=${user.token}`
-          );
-          
-        }),
-        map(additionalUserData => {
-
+        //   return this.http.get<UserData>(
+        //     `https://budget-management-3ca84-default-rtdb.europe-west1.firebasedatabase.app/users.json?orderBy="userId"&equalTo="${user.id}"&auth=${user.token}`
+        //   );
+        // }),
+        map((additionalUserData) => {
           for (const key in additionalUserData) {
             if (additionalUserData.hasOwnProperty(key)) {
               user.firstN = additionalUserData[key].firstName;
               user.lastN = additionalUserData[key].lastName;
-              user.bal = additionalUserData[key].balance;
             }
           }
 

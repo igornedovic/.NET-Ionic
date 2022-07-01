@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 
 import { AuthService } from '../auth.service';
 
@@ -16,6 +16,7 @@ export class RegisterPage implements OnInit {
   constructor(
     private authService: AuthService,
     private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController,
     private router: Router
   ) {}
 
@@ -24,10 +25,8 @@ export class RegisterPage implements OnInit {
       firstName: new FormControl('', Validators.required),
       lastName: new FormControl('', Validators.required),
       email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [
-        Validators.required,
-        Validators.minLength(6),
-      ]),
+      username: new FormControl('', Validators.required),
+      password: new FormControl('', Validators.required),
     });
   }
 
@@ -35,13 +34,27 @@ export class RegisterPage implements OnInit {
     this.loadingCtrl.create({ message: 'Registering...' }).then((loading) => {
       loading.present();
 
-      this.authService
-        .register(this.registerForm.value)
-        .subscribe((response) => {
+      this.authService.register(this.registerForm.value).subscribe(
+        (response) => {
           console.log(response);
           loading.dismiss();
-          this.router.navigateByUrl('/home');
-        });
+          this.router.navigateByUrl('/login');
+        },
+        (error) => {
+          loading.dismiss();
+          let message = error.error;
+
+          this.alertCtrl
+            .create({
+              header: 'Registration failed',
+              message,
+              buttons: ['Okay'],
+            })
+            .then((alert) => {
+              alert.present();
+            });
+        }
+      );
     });
   }
 }

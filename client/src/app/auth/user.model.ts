@@ -1,16 +1,16 @@
 export class User {
   constructor(
-    public id: string,
+    public id: number,
+    public username: string,
     public email: string,
+    public firstName: string,
+    public lastName: string,
+    public role: string,
     private _token: string,
-    private _tokenExpirationDate: Date,
-    public firstName?: string,
-    public lastName?: string,
-    public balance?: number
   ) {}
 
   get token() {
-    if (!this._tokenExpirationDate || this._tokenExpirationDate <= new Date()) {
+    if (!this._token) {
       return null;
     }
 
@@ -23,9 +23,5 @@ export class User {
 
   set lastN(lastName: string) {
     this.lastName = lastName;
-  }
-
-  set bal(balance: number) {
-    this.balance = balance;
   }
 }

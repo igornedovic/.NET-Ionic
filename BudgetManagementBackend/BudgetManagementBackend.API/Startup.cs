@@ -32,11 +32,23 @@ namespace BudgetManagementBackend.API
 
         public IConfiguration Configuration { get; }
 
+        readonly string cors = "Policy";
+
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
             services.AddControllers();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(cors,
+                builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                });
+            });
 
             services.AddDbContext<BudgetDbContext>(options =>
             {
@@ -65,7 +77,7 @@ namespace BudgetManagementBackend.API
                     };
 
                 });
-            
+
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
         }
 
@@ -76,6 +88,8 @@ namespace BudgetManagementBackend.API
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(cors);
 
             app.UseHttpsRedirection();
 

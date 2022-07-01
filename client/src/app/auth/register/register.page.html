@@ -74,11 +74,31 @@
       <ion-row>
         <ion-col size-sm="6" offset-sm="3">
           <ion-item>
+            <ion-label position="floating">Username</ion-label>
+            <ion-input
+              type="text"
+              required
+              formControlName="username"
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngIf="registerForm.get('username').invalid && registerForm.get('username').touched"
+      >
+        <ion-col size-sm="6" offset-sm="3">
+          <span>Username must contain at least 1 character.</span>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size-sm="6" offset-sm="3">
+          <ion-item>
             <ion-label position="floating">Password</ion-label>
             <ion-input
               type="password"
               required
-              minlength="6"
               formControlName="password"
             ></ion-input>
           </ion-item>
@@ -89,7 +109,7 @@
         *ngIf="registerForm.get('password').invalid && registerForm.get('password').touched"
       >
         <ion-col size-sm="6" offset-sm="3">
-          <span>Password must be minimum 6 characters long.</span>
+          <span>Password must contain at least 1 character.</span>
         </ion-col>
       </ion-row>
 
