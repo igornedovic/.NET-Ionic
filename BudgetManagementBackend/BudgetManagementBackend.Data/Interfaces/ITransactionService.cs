@@ -11,5 +11,6 @@ namespace BudgetManagementBackend.Data.Interfaces
     {
         public List<TransactionReadDto> GetAllTransactionByUser(int userId);
         public TransactionReadDto AddTransaction(TransactionCreateDto transactionCreateDto);
+        public bool UpdateTransaction(int id, TransactionCreateDto transactionCreateDto);
     }
 }

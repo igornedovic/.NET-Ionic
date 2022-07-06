@@ -26,7 +26,8 @@ namespace BudgetManagementBackend.Services.Services
 
             if (transactions == null) return null;
 
-            var adjustedTransactions = transactions.Select(t => {
+            var adjustedTransactions = transactions.Select(t =>
+            {
                 var temp = _mapper.Map<TransactionReadDto>(t);
                 temp.Type = Enum.GetName(typeof(TransactionType), t.Type);
                 return temp;
@@ -38,9 +39,9 @@ namespace BudgetManagementBackend.Services.Services
         public TransactionReadDto AddTransaction(TransactionCreateDto transactionCreateDto)
         {
             TransactionType type = (TransactionType)Enum.Parse(typeof(TransactionType), transactionCreateDto.Type);
-            
+
             DateTime date = DateTime.ParseExact(transactionCreateDto.Date, "yyyy-MM-dd", null);
-            
+
             var transaction = _mapper.Map<Transaction>(transactionCreateDto);
             transaction.Type = type;
             transaction.Date = date;
@@ -55,5 +56,21 @@ namespace BudgetManagementBackend.Services.Services
             return null;
         }
 
+        public bool UpdateTransaction(int id, TransactionCreateDto transactionCreateDto)
+        {
+            var transactionToUpdate = _uow.TransactionRepository.GetById(id);
+
+            if (transactionToUpdate == null) return false;
+
+            DateTime date = DateTime.ParseExact(transactionCreateDto.Date, "yyyy-MM-dd", null);
+
+            var updatedTransaction = _mapper.Map<Transaction>(transactionCreateDto);
+            updatedTransaction.TransactionId = transactionToUpdate.TransactionId;
+            updatedTransaction.Date = date;
+
+            bool updateSucceeded = _uow.TransactionRepository.Update(updatedTransaction);
+
+            return updateSucceeded;   
+        }
     }
 }

@@ -45,6 +45,11 @@ namespace BudgetManagementBackend.Services.Repositories
             }
         }
 
+        public User GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public User GetUserByUsername(string username)
         {
             try
@@ -56,6 +61,11 @@ namespace BudgetManagementBackend.Services.Repositories
                 Console.WriteLine(ex.Message);
                 return null;
             }
+        }
+
+        public bool Update(User t)
+        {
+            throw new NotImplementedException();
         }
     }
 }

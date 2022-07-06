@@ -28,7 +28,7 @@ export class NewTransactionPage implements OnInit, OnDestroy {
 
   transactionTypes = Object.values(TransactionType);
   title: string;
-  transactionId: string;
+  transactionId: number;
   type: string;
   purpose: string;
   amount: number;
@@ -124,20 +124,21 @@ export class NewTransactionPage implements OnInit, OnDestroy {
   }
 
   onUpdateTransaction() {
-    // this.loadingCtrl
-    //   .create({
-    //     message: 'Updating transaction...',
-    //   })
-    //   .then((loadingEl) => {
-    //     loadingEl.present();
-    //     this.transactionService
-    //       .updateTransaction(this.transactionId, this.transactionForm.value)
-    //       .subscribe(() => {
-    //         loadingEl.dismiss();
-    //         this.transactionForm.reset();
-    //         this.router.navigate(['/home']);
-    //       });
-    //   });
+    this.loadingCtrl
+      .create({
+        message: 'Updating transaction...',
+      })
+      .then((loadingEl) => {
+        loadingEl.present();
+        this.transactionService
+          .updateTransaction(this.transactionId, this.transactionForm.value)
+          .subscribe((response) => {
+            console.log(response);
+            loadingEl.dismiss();
+            this.transactionForm.reset();
+            this.router.navigate(['/home']);
+          });
+      });
   }
 
   onImageImported(imageData: string | File) {

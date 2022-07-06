@@ -40,9 +40,19 @@ namespace BudgetManagementBackend.API.Controllers
         {
             var transaction = _transactionService.AddTransaction(transactionCreateDto);
 
-            if (transaction == null) return BadRequest("Could not add transaction!");
+            if (transaction == null) return BadRequest("Unable to add transaction!");
 
             return Ok(transaction);
+        }
+
+        // PUT api/transaction/{id}
+        [HttpPut("{id}")]
+        public ActionResult UpdateTransaction(int id, TransactionCreateDto transactionCreateDto)
+        {
+            if (_transactionService.UpdateTransaction(id, transactionCreateDto))
+                return Ok("Successfully updated!");
+
+            return BadRequest("Unable to update transaction!");
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BudgetManagementBackend.Data;
 using BudgetManagementBackend.Data.Interfaces;
 using BudgetManagementBackend.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BudgetManagementBackend.Services.Repositories
 {
@@ -21,7 +22,7 @@ namespace BudgetManagementBackend.Services.Repositories
         {
             try
             {
-               return _context.Transactions.Where(t => t.UserId == userId).ToList();
+                return _context.Transactions.Where(t => t.UserId == userId).ToList();
             }
             catch (Exception ex)
             {
@@ -44,5 +45,36 @@ namespace BudgetManagementBackend.Services.Repositories
                 return null;
             }
         }
+
+        public Transaction GetById(int id)
+        {
+            try
+            {
+                var transactionToUpdate = _context.Transactions.SingleOrDefault(t => t.TransactionId == id);
+                _context.Entry(transactionToUpdate).State = EntityState.Detached;
+                return transactionToUpdate;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
+        public bool Update(Transaction t)
+        {
+            try
+            {
+                _context.Update(t);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
     }
 }

@@ -43,7 +43,7 @@ export class TransactionService {
 
     return this.http.post<{ url: string }>(
       'https://api.cloudinary.com/v1_1/dosbawfen/image/upload',
-      formData,
+      formData
     );
   }
 
@@ -133,48 +133,51 @@ export class TransactionService {
     );
   }
 
-  updateTransaction(id: string, transactionData: TransactionData) {
-    // let updatedTransactions: Transaction[];
-    // let fetchedToken: string;
-    // return this.authService.token.pipe(
-    //   take(1),
-    //   switchMap((token) => {
-    //     fetchedToken = token;
-    //     return this.transactions;
-    //   }),
-    //   take(1),
-    //   switchMap((transactions) => {
-    //     if (!transactions || transactions.length <= 0) {
-    //       return this.getTransactions();
-    //     } else {
-    //       return of(transactions);
-    //     }
-    //   }),
-    //   switchMap((transactions) => {
-    //     const updatedTransactionIndex = transactions.findIndex(
-    //       (pl) => pl.id === id
-    //     );
-    //     updatedTransactions = [...transactions];
-    //     const oldTransaction = updatedTransactions[updatedTransactionIndex];
-    //     updatedTransactions[updatedTransactionIndex] = new Transaction(
-    //       id,
-    //       transactionData.type,
-    //       transactionData.purpose,
-    //       +transactionData.amount,
-    //       new Date(transactionData.date),
-    //       transactionData.imageUrl,
-    //       oldTransaction.userId
-    //     );
-    //     return this.http.put(
-    //       `https://budget-management-3ca84-default-rtdb.europe-west1.firebasedatabase.app/transactions/${id}.json?auth=${fetchedToken}`,
-    //       { ...updatedTransactions[updatedTransactionIndex], id: null }
-    //     );
-    //   }),
-    //   tap(() => {
-    //     this._transactions.next(updatedTransactions);
-    //     this.changeBalance(updatedTransactions);
-    //   })
-    // );
+  updateTransaction(id: number, transactionData: TransactionData) {
+    let updatedTransactions: Transaction[];
+    let fetchedToken: string;
+    return this.transactions.pipe(
+      take(1),
+      switchMap((transactions) => {
+        if (!transactions || transactions.length <= 0) {
+          return this.getTransactions();
+        } else {
+          return of(transactions);
+        }
+      }),
+      switchMap((transactions) => {
+        const updatedTransactionIndex = transactions.findIndex(
+          (pl) => pl.id === id
+        );
+        updatedTransactions = [...transactions];
+        const oldTransaction = updatedTransactions[updatedTransactionIndex];
+        updatedTransactions[updatedTransactionIndex] = new Transaction(
+          id,
+          transactionData.type,
+          transactionData.purpose,
+          +transactionData.amount,
+          new Date(transactionData.date),
+          transactionData.imageUrl,
+          oldTransaction.userId
+        );
+        console.log(updatedTransactions[updatedTransactionIndex]);
+        return this.http.put(this.apiUrl + `transaction/${id}`, {
+          purpose: updatedTransactions[updatedTransactionIndex].purpose,
+          type: updatedTransactions[updatedTransactionIndex].type.toString(),
+          date: updatedTransactions[updatedTransactionIndex].date
+            .toISOString()
+            .slice(0, 10),
+          amount: updatedTransactions[updatedTransactionIndex].amount,
+          imageUrl: updatedTransactions[updatedTransactionIndex].imageUrl,
+          userId: updatedTransactions[updatedTransactionIndex].userId,
+        }, {responseType: 'text'});
+      }),
+      tap((response) => {
+        this._transactions.next(updatedTransactions);
+        this.changeBalance(updatedTransactions);
+        return response;
+      })
+    );
   }
 
   deleteTransaction(transactionId: string) {
