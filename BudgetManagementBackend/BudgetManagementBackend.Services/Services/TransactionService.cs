@@ -20,9 +20,19 @@ namespace BudgetManagementBackend.Services.Services
             _uow = uow;
         }
 
-        public List<Transaction> GetAllTransactionByUser()
+        public List<TransactionReadDto> GetAllTransactionByUser(int userId)
         {
-            throw new NotImplementedException();
+            var transactions = _uow.TransactionRepository.GetTransactionsByUser(userId);
+
+            if (transactions == null) return null;
+
+            var adjustedTransactions = transactions.Select(t => {
+                var temp = _mapper.Map<TransactionReadDto>(t);
+                temp.Type = Enum.GetName(typeof(TransactionType), t.Type);
+                return temp;
+            }).ToList();
+
+            return adjustedTransactions;
         }
 
         public TransactionReadDto AddTransaction(TransactionCreateDto transactionCreateDto)

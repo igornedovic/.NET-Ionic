@@ -9,7 +9,7 @@ namespace BudgetManagementBackend.Data.Interfaces
 {
     public interface ITransactionService
     {
-        public List<Transaction> GetAllTransactionByUser();
+        public List<TransactionReadDto> GetAllTransactionByUser(int userId);
         public TransactionReadDto AddTransaction(TransactionCreateDto transactionCreateDto);
     }
 }

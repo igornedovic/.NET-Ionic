@@ -23,10 +23,13 @@ namespace BudgetManagementBackend.API.Controllers
 
         // GET api/transaction
         [HttpGet]
-        [Authorize(Roles = "User")]
-        public ActionResult<List<Transaction>> GetAllTransactionsByUser()
+        public ActionResult<List<Transaction>> GetAllTransactionsByUser(int userId)
         {
-            return _transactionService.GetAllTransactionByUser();
+            var transactions = _transactionService.GetAllTransactionByUser(userId);
+
+            if (transactions == null || transactions.Count == 0) return NotFound("No transactions found!");
+
+            return Ok(transactions);
         }
 
         // POST api/transaction

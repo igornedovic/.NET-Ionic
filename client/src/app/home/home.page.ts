@@ -17,6 +17,7 @@ import { TransactionService } from '../new-transaction/transaction.service';
 export class HomePage implements OnInit, OnDestroy {
   transactions: Transaction[];
   isLoading = false;
+  message: string;
   private transactionSub: Subscription;
 
   constructor(
@@ -27,11 +28,15 @@ export class HomePage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isLoading = true;
-    this.transactionSub = this.transactionService
-      .getTransactions()
-      .subscribe(() => {
+    this.transactionSub = this.transactionService.getTransactions().subscribe(
+      () => {
         this.isLoading = false;
-      });
+      },
+      (error) => {
+        this.isLoading = false;
+        this.message = error.error;
+      }
+    );
 
     this.transactionSub = this.transactionService.transactions.subscribe(
       (transactions) => {
@@ -54,7 +59,7 @@ export class HomePage implements OnInit, OnDestroy {
     });
   }
 
-  onDeleteTransaction(transactionId: string) {
+  onDeleteTransaction(transactionId: number) {
     // this.loadingCtrl
     //   .create({
     //     message: 'Deleting transaction...',

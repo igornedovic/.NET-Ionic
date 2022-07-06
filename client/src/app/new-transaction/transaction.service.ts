@@ -9,13 +9,13 @@ import { Transaction } from './transaction.model';
 import { TransactionType } from './transaction.model';
 
 interface TransactionData {
-  transactionId?: number;
+  transactionId: number;
   type: TransactionType;
   purpose: string;
   amount: number;
   date: Date;
   imageUrl: string;
-  userId: string;
+  userId: number;
 }
 
 @Injectable({
@@ -56,7 +56,6 @@ export class TransactionService {
       take(1),
       tap((userId) => {
         fetchedUserId = userId;
-        console.log(fetchedUserId);
       }),
       take(1),
       switchMap(() => {
@@ -99,34 +98,31 @@ export class TransactionService {
 
     return this.authService.userId.pipe(
       take(1),
-      switchMap((userId) => {
+      tap((userId) => {
         fetchedUserId = userId;
-        return this.authService.token;
       }),
       take(1),
       switchMap((token) => {
-        return this.http.get<{ [key: string]: TransactionData }>(
-          `https://budget-management-3ca84-default-rtdb.europe-west1.firebasedatabase.app/transactions.json?orderBy="userId"&equalTo="${fetchedUserId}"&auth=${token}`
+        return this.http.get<TransactionData[]>(
+          `${this.apiUrl}transaction?userId=${fetchedUserId}`
         );
       }),
       map((transactionsResponse) => {
         const transactions: Transaction[] = [];
 
-        for (const key in transactionsResponse) {
-          if (transactionsResponse.hasOwnProperty(key)) {
-            // transactions.push(
-            //   new Transaction(
-            //     key,
-            //     transactionsResponse[key].type,
-            //     transactionsResponse[key].purpose,
-            //     +transactionsResponse[key].amount,
-            //     new Date(transactionsResponse[key].date),
-            //     transactionsResponse[key].imageUrl,
-            //     transactionsResponse[key].userId
-            //   )
-            // );
-          }
-        }
+        transactionsResponse.forEach((t) => {
+          transactions.push(
+            new Transaction(
+              t.transactionId,
+              t.type,
+              t.purpose,
+              +t.amount,
+              new Date(t.date),
+              t.imageUrl,
+              t.userId
+            )
+          );
+        });
 
         return transactions;
       }),

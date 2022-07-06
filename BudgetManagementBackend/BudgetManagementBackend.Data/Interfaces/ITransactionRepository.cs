@@ -8,6 +8,6 @@ namespace BudgetManagementBackend.Data.Interfaces
 {
     public interface ITransactionRepository : IRepository<Transaction>
     {
-        
+        public List<Transaction> GetTransactionsByUser(int userId);
     }
 }

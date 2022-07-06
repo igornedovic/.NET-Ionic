@@ -17,6 +17,19 @@ namespace BudgetManagementBackend.Services.Repositories
             _context = context;
         }
 
+        public List<Transaction> GetTransactionsByUser(int userId)
+        {
+            try
+            {
+               return _context.Transactions.Where(t => t.UserId == userId).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
         public Transaction Create(Transaction transaction)
         {
             try
@@ -31,6 +44,5 @@ namespace BudgetManagementBackend.Services.Repositories
                 return null;
             }
         }
-
     }
 }

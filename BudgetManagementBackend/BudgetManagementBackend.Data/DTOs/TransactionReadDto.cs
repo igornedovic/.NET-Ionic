@@ -10,7 +10,7 @@ namespace BudgetManagementBackend.Data.DTOs
     {
         public int TransactionId { get; set; }
         public string Purpose { get; set; }
-        public TransactionType Type { get; set; }
+        public string Type { get; set; }
         public DateTime Date { get; set; }
         public double Amount { get; set; }
         public string ImageUrl { get; set; }
