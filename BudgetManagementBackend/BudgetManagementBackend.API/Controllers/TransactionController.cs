@@ -29,7 +29,7 @@ namespace BudgetManagementBackend.API.Controllers
             return _transactionService.GetAllTransactionByUser();
         }
 
-        // POST api/trasaction
+        // POST api/transaction
         [HttpPost]
         public ActionResult<TransactionReadDto> AddTransaction(TransactionCreateDto transactionCreateDto)
         {

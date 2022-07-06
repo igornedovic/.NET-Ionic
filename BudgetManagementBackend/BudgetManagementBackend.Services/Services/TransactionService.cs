@@ -29,7 +29,7 @@ namespace BudgetManagementBackend.Services.Services
         {
             TransactionType type = (TransactionType)Enum.Parse(typeof(TransactionType), transactionCreateDto.Type);
             
-            DateTime date = DateTime.ParseExact(transactionCreateDto.Date, "MM/dd/yyyy", null);
+            DateTime date = DateTime.ParseExact(transactionCreateDto.Date, "yyyy-MM-dd", null);
             
             var transaction = _mapper.Map<Transaction>(transactionCreateDto);
             transaction.Type = type;

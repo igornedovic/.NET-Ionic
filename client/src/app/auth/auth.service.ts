@@ -7,7 +7,7 @@ import { BehaviorSubject, from } from 'rxjs';
 import { Storage } from '@capacitor/storage';
 
 interface ResponseData {
-  id: number;
+  userId: number;
   username: string;
   email: string;
   firstName: string;
@@ -50,7 +50,7 @@ export class AuthService {
     return this._user.asObservable().pipe(
       map((user) => {
         if (user) {
-          return user.id;
+          return user.userId;
         } else {
           return null;
         }
@@ -104,7 +104,7 @@ export class AuthService {
       .pipe(
         tap((response) => {
           user = new User(
-            response.id,
+            response.userId,
             response.username,
             response.email,
             response.firstName,
@@ -114,7 +114,7 @@ export class AuthService {
           );
 
           this.storeAuthData(
-            user.id,
+            user.userId,
             user.username,
             user.email,
             user.firstName,

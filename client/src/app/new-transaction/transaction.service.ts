@@ -38,25 +38,28 @@ export class TransactionService {
 
   uploadImage(imageFile: File) {
     const formData = new FormData();
-    formData.append("file", imageFile);
-    formData.append("upload_preset", "tnzfsbju");
+    formData.append('file', imageFile);
+    formData.append('upload_preset', 'tnzfsbju');
 
-    return this.http.post<{url: string}>("https://api.cloudinary.com/v1_1/dosbawfen/image/upload", formData);
+    return this.http.post<{ url: string }>(
+      'https://api.cloudinary.com/v1_1/dosbawfen/image/upload',
+      formData
+    );
   }
 
   addTransaction(transactionData: TransactionData, imageUrl: string) {
     let fetchedUserId: number;
     let newTransaction: Transaction;
-    let generatedId: string;
+    let generatedId: number;
 
     return this.authService.userId.pipe(
       take(1),
-      switchMap((userId) => {
+      tap((userId) => {
         fetchedUserId = userId;
-        return this.authService.token;
+        console.log(fetchedUserId);
       }),
       take(1),
-      switchMap((token) => {
+      switchMap(() => {
         newTransaction = new Transaction(
           null,
           transactionData.type,
@@ -66,20 +69,25 @@ export class TransactionService {
           imageUrl,
           fetchedUserId
         );
-        return this.http.post<{ name: string }>(
-          `https://budget-management-3ca84-default-rtdb.europe-west1.firebasedatabase.app/transactions.json?auth=${token}`,
-          newTransaction
-        );
+
+        return this.http.post<TransactionData>(this.apiUrl + 'transaction', {
+          purpose: newTransaction.purpose,
+          type: newTransaction.type.toString(),
+          date: newTransaction.date.toISOString().slice(0, 10),
+          amount: newTransaction.amount,
+          imageUrl: newTransaction.imageUrl,
+          userId: newTransaction.userId,
+        });
       }),
       take(1),
       switchMap((response) => {
-        generatedId = response.name;
+        generatedId = response.transactionId;
         return this.transactions;
       }),
       take(1),
       tap((transations) => {
         newTransaction.id = generatedId;
-        const newTransactions = transations.concat(newTransaction)
+        const newTransactions = transations.concat(newTransaction);
         this._transactions.next(newTransactions);
         this.changeBalance(newTransactions);
       })
@@ -130,69 +138,69 @@ export class TransactionService {
   }
 
   updateTransaction(id: string, transactionData: TransactionData) {
-    let updatedTransactions: Transaction[];
-    let fetchedToken: string;
-    return this.authService.token.pipe(
-      take(1),
-      switchMap((token) => {
-        fetchedToken = token;
-        return this.transactions;
-      }),
-      take(1),
-      switchMap((transactions) => {
-        if (!transactions || transactions.length <= 0) {
-          return this.getTransactions();
-        } else {
-          return of(transactions);
-        }
-      }),
-      switchMap((transactions) => {
-        const updatedTransactionIndex = transactions.findIndex(
-          (pl) => pl.id === id
-        );
-        updatedTransactions = [...transactions];
-        const oldTransaction = updatedTransactions[updatedTransactionIndex];
-        updatedTransactions[updatedTransactionIndex] = new Transaction(
-          id,
-          transactionData.type,
-          transactionData.purpose,
-          +transactionData.amount,
-          new Date(transactionData.date),
-          transactionData.imageUrl,
-          oldTransaction.userId
-        );
-        return this.http.put(
-          `https://budget-management-3ca84-default-rtdb.europe-west1.firebasedatabase.app/transactions/${id}.json?auth=${fetchedToken}`,
-          { ...updatedTransactions[updatedTransactionIndex], id: null }
-        );
-      }),
-      tap(() => {
-        this._transactions.next(updatedTransactions);
-        this.changeBalance(updatedTransactions);
-      })
-    );
+    // let updatedTransactions: Transaction[];
+    // let fetchedToken: string;
+    // return this.authService.token.pipe(
+    //   take(1),
+    //   switchMap((token) => {
+    //     fetchedToken = token;
+    //     return this.transactions;
+    //   }),
+    //   take(1),
+    //   switchMap((transactions) => {
+    //     if (!transactions || transactions.length <= 0) {
+    //       return this.getTransactions();
+    //     } else {
+    //       return of(transactions);
+    //     }
+    //   }),
+    //   switchMap((transactions) => {
+    //     const updatedTransactionIndex = transactions.findIndex(
+    //       (pl) => pl.id === id
+    //     );
+    //     updatedTransactions = [...transactions];
+    //     const oldTransaction = updatedTransactions[updatedTransactionIndex];
+    //     updatedTransactions[updatedTransactionIndex] = new Transaction(
+    //       id,
+    //       transactionData.type,
+    //       transactionData.purpose,
+    //       +transactionData.amount,
+    //       new Date(transactionData.date),
+    //       transactionData.imageUrl,
+    //       oldTransaction.userId
+    //     );
+    //     return this.http.put(
+    //       `https://budget-management-3ca84-default-rtdb.europe-west1.firebasedatabase.app/transactions/${id}.json?auth=${fetchedToken}`,
+    //       { ...updatedTransactions[updatedTransactionIndex], id: null }
+    //     );
+    //   }),
+    //   tap(() => {
+    //     this._transactions.next(updatedTransactions);
+    //     this.changeBalance(updatedTransactions);
+    //   })
+    // );
   }
 
   deleteTransaction(transactionId: string) {
-    return this.authService.token.pipe(
-      take(1),
-      switchMap((token) => {
-        return this.http.delete(
-          `https://budget-management-3ca84-default-rtdb.europe-west1.firebasedatabase.app/transactions/${transactionId}.json?auth=${token}`
-        );
-      }),
-      switchMap(() => {
-        return this.transactions;
-      }),
-      take(1),
-      tap((transactions) => {
-        const newTransactions = transactions.filter(
-          (t) => t.id !== transactionId
-        );
-        this._transactions.next(newTransactions);
-        this.changeBalance(newTransactions);
-      })
-    );
+    // return this.authService.token.pipe(
+    //   take(1),
+    //   switchMap((token) => {
+    //     return this.http.delete(
+    //       `https://budget-management-3ca84-default-rtdb.europe-west1.firebasedatabase.app/transactions/${transactionId}.json?auth=${token}`
+    //     );
+    //   }),
+    //   switchMap(() => {
+    //     return this.transactions;
+    //   }),
+    //   take(1),
+    //   tap((transactions) => {
+    //     const newTransactions = transactions.filter(
+    //       (t) => t.id !== transactionId
+    //     );
+    //     this._transactions.next(newTransactions);
+    //     this.changeBalance(newTransactions);
+    //   })
+    // );
   }
 
   changeBalance(transactions: Transaction[]) {
@@ -205,7 +213,7 @@ export class TransactionService {
         newBalance -= t.amount;
       }
     });
-    
+
     this._balance.next(newBalance);
   }
 }
