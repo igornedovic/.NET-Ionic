@@ -27,7 +27,7 @@
         *ngIf="!isLoading && (!transactions || transactions.length <= 0)"
         class="ion-text-center"
       >
-        <p>{{message}}</p>
+        <p>No transactions found!</p>
       </ion-col>
     </ion-row>
     <ion-card *ngFor="let transaction of transactions">

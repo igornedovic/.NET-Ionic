@@ -67,5 +67,10 @@ namespace BudgetManagementBackend.Services.Repositories
         {
             throw new NotImplementedException();
         }
+
+                public bool Delete(User t)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -76,5 +76,19 @@ namespace BudgetManagementBackend.Services.Repositories
             }
         }
 
+        public bool Delete(Transaction t)
+        {
+            try
+            {
+                _context.Transactions.Remove(t);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
     }
 }

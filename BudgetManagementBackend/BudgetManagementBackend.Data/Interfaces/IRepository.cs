@@ -10,5 +10,6 @@ namespace BudgetManagementBackend.Data.Interfaces
         public T GetById(int id);
         public T Create(T t);
         public bool Update(T t);
+        public bool Delete (T t);
     }
 }

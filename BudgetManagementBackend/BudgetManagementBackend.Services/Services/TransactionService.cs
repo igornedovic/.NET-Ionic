@@ -68,9 +68,20 @@ namespace BudgetManagementBackend.Services.Services
             updatedTransaction.TransactionId = transactionToUpdate.TransactionId;
             updatedTransaction.Date = date;
 
-            bool updateSucceeded = _uow.TransactionRepository.Update(updatedTransaction);
+            bool successfulUpdate = _uow.TransactionRepository.Update(updatedTransaction);
 
-            return updateSucceeded;   
+            return successfulUpdate;   
+        }
+
+        public bool DeleteTransaction(int id)
+        {
+            var transactionToDelete = _uow.TransactionRepository.GetById(id);
+
+            if (transactionToDelete == null) return false;
+
+            bool successfulDelete = _uow.TransactionRepository.Delete(transactionToDelete);
+
+            return successfulDelete;
         }
     }
 }

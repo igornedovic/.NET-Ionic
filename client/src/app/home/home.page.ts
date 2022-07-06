@@ -60,18 +60,18 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   onDeleteTransaction(transactionId: number) {
-    // this.loadingCtrl
-    //   .create({
-    //     message: 'Deleting transaction...',
-    //   })
-    //   .then((loadingEl) => {
-    //     loadingEl.present();
-    //     this.transactionService
-    //       .deleteTransaction(transactionId)
-    //       .subscribe(() => {
-    //         loadingEl.dismiss();
-    //       });
-    //   });
+    this.loadingCtrl
+      .create({
+        message: 'Deleting transaction...',
+      })
+      .then((loadingEl) => {
+        loadingEl.present();
+        this.transactionService
+          .deleteTransaction(transactionId)
+          .subscribe(() => {
+            loadingEl.dismiss();
+          });
+      });
   }
 
   ngOnDestroy() {

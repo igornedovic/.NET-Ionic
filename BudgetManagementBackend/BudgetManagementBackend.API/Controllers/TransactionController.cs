@@ -54,5 +54,14 @@ namespace BudgetManagementBackend.API.Controllers
 
             return BadRequest("Unable to update transaction!");
         }
+
+        // DELETE api/transaction/{id}
+        [HttpDelete("{id}")]
+        public ActionResult DeleteTransaction(int id) {
+            if (_transactionService.DeleteTransaction(id)) 
+                return Ok("Successfully deleted!");
+            
+            return BadRequest("Unable to delete transaction!");
+        }
     }
 }

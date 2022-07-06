@@ -135,7 +135,7 @@ export class TransactionService {
 
   updateTransaction(id: number, transactionData: TransactionData) {
     let updatedTransactions: Transaction[];
-    let fetchedToken: string;
+
     return this.transactions.pipe(
       take(1),
       switchMap((transactions) => {
@@ -160,17 +160,21 @@ export class TransactionService {
           transactionData.imageUrl,
           oldTransaction.userId
         );
-        console.log(updatedTransactions[updatedTransactionIndex]);
-        return this.http.put(this.apiUrl + `transaction/${id}`, {
-          purpose: updatedTransactions[updatedTransactionIndex].purpose,
-          type: updatedTransactions[updatedTransactionIndex].type.toString(),
-          date: updatedTransactions[updatedTransactionIndex].date
-            .toISOString()
-            .slice(0, 10),
-          amount: updatedTransactions[updatedTransactionIndex].amount,
-          imageUrl: updatedTransactions[updatedTransactionIndex].imageUrl,
-          userId: updatedTransactions[updatedTransactionIndex].userId,
-        }, {responseType: 'text'});
+
+        return this.http.put(
+          this.apiUrl + `transaction/${id}`,
+          {
+            purpose: updatedTransactions[updatedTransactionIndex].purpose,
+            type: updatedTransactions[updatedTransactionIndex].type.toString(),
+            date: updatedTransactions[updatedTransactionIndex].date
+              .toISOString()
+              .slice(0, 10),
+            amount: updatedTransactions[updatedTransactionIndex].amount,
+            imageUrl: updatedTransactions[updatedTransactionIndex].imageUrl,
+            userId: updatedTransactions[updatedTransactionIndex].userId,
+          },
+          { responseType: 'text' }
+        );
       }),
       tap((response) => {
         this._transactions.next(updatedTransactions);
@@ -180,26 +184,24 @@ export class TransactionService {
     );
   }
 
-  deleteTransaction(transactionId: string) {
-    // return this.authService.token.pipe(
-    //   take(1),
-    //   switchMap((token) => {
-    //     return this.http.delete(
-    //       `https://budget-management-3ca84-default-rtdb.europe-west1.firebasedatabase.app/transactions/${transactionId}.json?auth=${token}`
-    //     );
-    //   }),
-    //   switchMap(() => {
-    //     return this.transactions;
-    //   }),
-    //   take(1),
-    //   tap((transactions) => {
-    //     const newTransactions = transactions.filter(
-    //       (t) => t.id !== transactionId
-    //     );
-    //     this._transactions.next(newTransactions);
-    //     this.changeBalance(newTransactions);
-    //   })
-    // );
+  deleteTransaction(id: number) {
+    let newTransactions: Transaction[];
+
+    return this.transactions.pipe(
+      take(1),
+      switchMap((transactions) => {
+        newTransactions = transactions.filter((t) => t.id !== id);
+
+        return this.http.delete(this.apiUrl + `transaction/${id}`, {
+          responseType: 'text',
+        });
+      }),
+      tap((response) => {
+        console.log(response);
+        this._transactions.next(newTransactions);
+        this.changeBalance(newTransactions);
+      })
+    );
   }
 
   changeBalance(transactions: Transaction[]) {
