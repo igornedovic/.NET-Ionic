@@ -14,6 +14,8 @@ namespace BudgetManagementBackend.API.Helpers
         {
             CreateMap<UserCreateDto, User>();
             CreateMap<User, UserReadDto>();
+            CreateMap<TransactionCreateDto, Transaction>();
+            CreateMap<Transaction, TransactionReadDto>();
         }
     }
 }

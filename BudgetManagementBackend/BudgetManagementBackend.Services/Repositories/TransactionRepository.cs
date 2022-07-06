@@ -10,16 +10,26 @@ namespace BudgetManagementBackend.Services.Repositories
 {
     public class TransactionRepository : ITransactionRepository
     {
-        private readonly BudgetDbContext context;
+        private readonly BudgetDbContext _context;
 
         public TransactionRepository(BudgetDbContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
         public Transaction Create(Transaction transaction)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Add(transaction);
+                _context.SaveChanges();
+                return transaction;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
         }
 
     }

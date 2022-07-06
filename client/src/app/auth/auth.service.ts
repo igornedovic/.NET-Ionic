@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { User } from './user.model';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, from } from 'rxjs';
+import { Storage } from '@capacitor/storage';
 
 interface ResponseData {
   id: number;
@@ -28,7 +29,7 @@ interface RequestData {
   providedIn: 'root',
 })
 export class AuthService {
-  baseUrl = environment.apiUrl;
+  apiUrl = environment.apiUrl;
   private _user = new BehaviorSubject<User>(null);
 
   constructor(private http: HttpClient) {}
@@ -82,7 +83,7 @@ export class AuthService {
   }
 
   register(userForm: RequestData) {
-    return this.http.post<ResponseData>(this.baseUrl + 'user/register', {
+    return this.http.post<ResponseData>(this.apiUrl + 'user/register', {
       username: userForm.username,
       password: userForm.password,
       email: userForm.email,
@@ -96,7 +97,7 @@ export class AuthService {
     let user: User;
 
     return this.http
-      .post<ResponseData>(this.baseUrl + 'user/login', {
+      .post<ResponseData>(this.apiUrl + 'user/login', {
         username: userForm.username,
         password: userForm.password,
       })
@@ -113,6 +114,69 @@ export class AuthService {
 
         this._user.next(user);
       }));
+  }
+
+  autoLogin() {
+    return from(Storage.get({ key: 'authData' })).pipe(
+      map((storedData) => {
+        if (!storedData || !storedData.value) {
+          return null;
+        }
+
+        const parsedData = JSON.parse(storedData.value) as {
+          userId: string;
+          email: string;
+          token: string;
+          tokenExpirationDate: string;
+          firstName: string;
+          lastName: string;
+        };
+
+        const expirationDate = new Date(parsedData.tokenExpirationDate);
+
+        if (expirationDate <= new Date()) {
+          return null;
+        }
+
+        // const user = new User(
+        //   parsedData.userId,
+        //   parsedData.email,
+        //   parsedData.token,
+        //   expirationDate,
+        //   parsedData.firstName,
+        //   parsedData.lastName
+        // );
+        //
+        // return user;
+      }),
+      tap((user) => {
+        if (user) {
+          this._user.next(user);
+        }
+      }),
+      map((user) => {
+        return !!user;
+      })
+    );
+  }
+
+  private storeAuthData(
+    userId: string,
+    email: string,
+    token: string,
+    tokenExpirationDate: string,
+    firstName: string,
+    lastName: string
+  ) {
+    const data = JSON.stringify({
+      userId: userId,
+      email: email,
+      token: token,
+      tokenExpirationDate: tokenExpirationDate,
+      firstName: firstName,
+      lastName: lastName,
+    });
+    Storage.set({ key: 'authData', value: data });
   }
 
   logout() {

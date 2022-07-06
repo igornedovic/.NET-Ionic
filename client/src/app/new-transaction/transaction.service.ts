@@ -2,17 +2,19 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 import { AuthService } from '../auth/auth.service';
 import { Transaction } from './transaction.model';
 import { TransactionType } from './transaction.model';
 
 interface TransactionData {
+  transactionId?: number;
   type: TransactionType;
   purpose: string;
   amount: number;
   date: Date;
-  pictureUrl: string;
+  imageUrl: string;
   userId: string;
 }
 
@@ -20,6 +22,7 @@ interface TransactionData {
   providedIn: 'root',
 })
 export class TransactionService {
+  apiUrl = environment.apiUrl;
   private _transactions = new BehaviorSubject<Transaction[]>([]);
   private _balance = new BehaviorSubject<number>(0);
 
@@ -33,7 +36,15 @@ export class TransactionService {
     return this._balance.asObservable();
   }
 
-  addTransaction(transactionData: TransactionData) {
+  uploadImage(imageFile: File) {
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    formData.append("upload_preset", "tnzfsbju");
+
+    return this.http.post<{url: string}>("https://api.cloudinary.com/v1_1/dosbawfen/image/upload", formData);
+  }
+
+  addTransaction(transactionData: TransactionData, imageUrl: string) {
     let fetchedUserId: number;
     let newTransaction: Transaction;
     let generatedId: string;
@@ -52,7 +63,7 @@ export class TransactionService {
           transactionData.purpose,
           +transactionData.amount,
           new Date(transactionData.date),
-          transactionData.pictureUrl,
+          imageUrl,
           fetchedUserId
         );
         return this.http.post<{ name: string }>(
@@ -102,7 +113,7 @@ export class TransactionService {
             //     transactionsResponse[key].purpose,
             //     +transactionsResponse[key].amount,
             //     new Date(transactionsResponse[key].date),
-            //     transactionsResponse[key].pictureUrl,
+            //     transactionsResponse[key].imageUrl,
             //     transactionsResponse[key].userId
             //   )
             // );
@@ -147,7 +158,7 @@ export class TransactionService {
           transactionData.purpose,
           +transactionData.amount,
           new Date(transactionData.date),
-          transactionData.pictureUrl,
+          transactionData.imageUrl,
           oldTransaction.userId
         );
         return this.http.put(
@@ -179,6 +190,7 @@ export class TransactionService {
           (t) => t.id !== transactionId
         );
         this._transactions.next(newTransactions);
+        this.changeBalance(newTransactions);
       })
     );
   }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BudgetManagementBackend.Data.DTOs;
 using BudgetManagementBackend.Data.Interfaces;
 using BudgetManagementBackend.Data.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -13,19 +14,30 @@ namespace BudgetManagementBackend.API.Controllers
     [ApiController]
     public class TransactionController : ControllerBase
     {
-        private readonly ITransactionService transactionService;
+        private readonly ITransactionService _transactionService;
 
         public TransactionController(ITransactionService transactionService)
         {
-            this.transactionService = transactionService;
+            _transactionService = transactionService;
         }
 
         // GET api/transaction
         [HttpGet]
         [Authorize(Roles = "User")]
-        public List<Transaction> GetAllTransactionsByUser()
+        public ActionResult<List<Transaction>> GetAllTransactionsByUser()
         {
-            return transactionService.GetAllTransactionByUser();
+            return _transactionService.GetAllTransactionByUser();
+        }
+
+        // POST api/trasaction
+        [HttpPost]
+        public ActionResult<TransactionReadDto> AddTransaction(TransactionCreateDto transactionCreateDto)
+        {
+            var transaction = _transactionService.AddTransaction(transactionCreateDto);
+
+            if (transaction == null) return BadRequest("Could not add transaction!");
+
+            return Ok(transaction);
         }
     }
 }

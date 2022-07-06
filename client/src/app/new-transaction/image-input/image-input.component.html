@@ -1,0 +1,24 @@
+<div class="image-input">
+  <ion-img
+    role="button"
+    class="image"
+    (click)="onPickImage()"
+    [src]="isFetchedImage && !selectedImage ? fetchedImage : selectedImage"
+    *ngIf="(selectedImage && showPreview) || (fetchedImage && showPreview)"
+  ></ion-img>
+  <ion-button
+    color="primary"
+    (click)="onPickImage()"
+    *ngIf="(!selectedImage || !showPreview) && (!fetchedImage || !showPreview)"
+  >
+    <ion-icon name="camera" slot="start"></ion-icon>
+    <ion-label>Import Image</ion-label>
+  </ion-button>
+</div>
+<input
+  type="file"
+  accept="image/*"
+  *ngIf="usePicker"
+  #filePicker
+  (change)="onFileChosen($event)"
+/>
