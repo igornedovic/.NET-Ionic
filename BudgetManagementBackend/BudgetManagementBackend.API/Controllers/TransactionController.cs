@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BudgetManagementBackend.Data.DTOs;
 using BudgetManagementBackend.Data.Interfaces;
 using BudgetManagementBackend.Data.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,7 @@ namespace BudgetManagementBackend.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class TransactionController : ControllerBase
     {
         private readonly ITransactionService _transactionService;

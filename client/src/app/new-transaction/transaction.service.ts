@@ -43,7 +43,7 @@ export class TransactionService {
 
     return this.http.post<{ url: string }>(
       'https://api.cloudinary.com/v1_1/dosbawfen/image/upload',
-      formData
+      formData,
     );
   }
 

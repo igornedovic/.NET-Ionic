@@ -26,7 +26,7 @@ namespace BudgetManagementBackend.Services.Services
             var tokenHandler = new JwtSecurityTokenHandler();
 
             var key = Encoding.ASCII.GetBytes(config["Secret:Key"]);
-
+  
             List<Claim> claims = new List<Claim>();
             claims.Add(new Claim(ClaimTypes.Role, user.Role));
 
