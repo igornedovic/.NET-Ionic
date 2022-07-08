@@ -18,11 +18,11 @@ interface ResponseData {
 
 interface RequestData {
   username: string;
-  password: string;
+  password?: string;
   email: string;
   firstName: string;
   lastName: string;
-  role: string;
+  role?: string;
 }
 
 @Injectable({
@@ -128,6 +128,50 @@ export class AuthService {
       );
   }
 
+  updateProfile(id: number, requestData: RequestData) {
+    let userToUpdate: User;
+
+    return this.user.pipe(
+      tap((user) => {
+        userToUpdate = user;
+      }),
+      take(1),
+      switchMap(() => {
+        return this.http.put(this.apiUrl + `user/${id}`, {
+          firstName: requestData.firstName,
+          lastName: requestData.lastName,
+          email: requestData.email,
+          username: requestData.username
+        },
+        {
+          responseType: 'text'
+        });
+      }),
+      tap(response => {
+        if (response.toLowerCase().includes('success')) {
+          userToUpdate.firstName = requestData.firstName;
+          userToUpdate.lastName = requestData.lastName;
+          userToUpdate.email = requestData.email;
+          userToUpdate.username = requestData.username;
+  
+          this.storeAuthData(
+            userToUpdate.userId,
+            userToUpdate.username,
+            userToUpdate.email,
+            userToUpdate.firstName,
+            userToUpdate.lastName,
+            userToUpdate.role,
+            userToUpdate.token
+          );
+
+          this._user.next(userToUpdate);
+        }
+        
+        return response;
+      })
+    );
+  }
+
   autoLogin() {
     return from(Storage.get({ key: 'authData' })).pipe(
       map((storedData) => {
@@ -154,7 +198,7 @@ export class AuthService {
           parsedData.role,
           parsedData.token
         );
-        
+
         return user;
       }),
       tap((user) => {

@@ -13,5 +13,6 @@ namespace BudgetManagementBackend.Data.Interfaces
         public bool CheckUsername(string username);
         public User GetUserByUsername(string username);
         public UserReadDto Login(User user, string password);
+        public bool UpdateUser(int id, UserCreateDto user);
     }
 }

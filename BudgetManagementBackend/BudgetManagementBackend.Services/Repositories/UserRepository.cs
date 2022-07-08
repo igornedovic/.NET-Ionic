@@ -45,11 +45,6 @@ namespace BudgetManagementBackend.Services.Repositories
             }
         }
 
-        public User GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public User GetUserByUsername(string username)
         {
             try
@@ -63,12 +58,35 @@ namespace BudgetManagementBackend.Services.Repositories
             }
         }
 
-        public bool Update(User t)
+        public User GetById(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return _context.Users.SingleOrDefault(u => u.UserId == id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
         }
 
-                public bool Delete(User t)
+        public bool Update(User t)
+        {
+            try
+            {
+                _context.Update(t);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+        }
+
+        public bool Delete(User t)
         {
             throw new NotImplementedException();
         }

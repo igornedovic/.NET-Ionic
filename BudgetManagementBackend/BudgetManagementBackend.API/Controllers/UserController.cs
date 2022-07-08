@@ -46,5 +46,14 @@ namespace BudgetManagementBackend.API.Controllers
 
             return Ok(loggedInUser);
         }
+
+        // PUT api/user/{id}
+        [HttpPut("{id}")]
+        public ActionResult UpdateUser(int id, UserCreateDto userCreateDto) {
+            if (_userService.UpdateUser(id, userCreateDto))
+                return Ok("Successfully updated!");
+
+            return BadRequest("Unable to update user!");
+        }
     }
 }

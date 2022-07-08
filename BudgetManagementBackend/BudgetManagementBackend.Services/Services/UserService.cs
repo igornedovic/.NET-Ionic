@@ -69,6 +69,22 @@ namespace BudgetManagementBackend.Services.Services
 
             return loggedInUser;
         }
+
+        public bool UpdateUser(int id, UserCreateDto user)
+        {
+            var userToUpdate = _uow.UserRepository.GetById(id);
+
+            if (userToUpdate == null) return false;
+
+            userToUpdate.FirstName = user.FirstName;
+            userToUpdate.LastName = user.LastName;
+            userToUpdate.Email = user.Email;
+            userToUpdate.Username = user.Username;
+
+            bool successfulUpdate = _uow.UserRepository.Update(userToUpdate);
+
+            return successfulUpdate;
+        }
     }
 
 }
