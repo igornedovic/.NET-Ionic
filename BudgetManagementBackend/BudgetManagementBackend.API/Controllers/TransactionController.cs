@@ -23,9 +23,10 @@ namespace BudgetManagementBackend.API.Controllers
             _transactionService = transactionService;
         }
 
-        // GET api/transaction
+        // GET api/user/{userId}/transactions
+        [Route("~/api/user/{userId}/transactions")]
         [HttpGet]
-        public ActionResult<List<Transaction>> GetAllTransactionsByUser(int userId)
+        public ActionResult<List<TransactionReadDto>> GetAllTransactionsByUser(int userId)
         {
             var transactions = _transactionService.GetAllTransactionByUser(userId);
 
@@ -57,10 +58,11 @@ namespace BudgetManagementBackend.API.Controllers
 
         // DELETE api/transaction/{id}
         [HttpDelete("{id}")]
-        public ActionResult DeleteTransaction(int id) {
-            if (_transactionService.DeleteTransaction(id)) 
+        public ActionResult DeleteTransaction(int id)
+        {
+            if (_transactionService.DeleteTransaction(id))
                 return Ok("Successfully deleted!");
-            
+
             return BadRequest("Unable to delete transaction!");
         }
     }

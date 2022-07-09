@@ -102,9 +102,9 @@ export class TransactionService {
         fetchedUserId = userId;
       }),
       take(1),
-      switchMap((token) => {
+      switchMap(() => {
         return this.http.get<TransactionData[]>(
-          `${this.apiUrl}transaction?userId=${fetchedUserId}`
+          this.apiUrl + `user/${fetchedUserId}/transactions`
         );
       }),
       map((transactionsResponse) => {
