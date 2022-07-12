@@ -36,6 +36,26 @@ namespace BudgetManagementBackend.Services.Services
             return adjustedTransactions;
         }
 
+        public List<TransactionReadDto> GetFilteredTransactionsByUser(int userId, FilterParams filterParams)
+        {
+            DateTime fromDate = DateTime.ParseExact(filterParams.FromDate, "yyyy-MM-dd", null);
+            DateTime toDate = DateTime.ParseExact(filterParams.ToDate, "yyyy-MM-dd", null);
+
+            var filteredTransactions = _uow.TransactionRepository.GetFilteredTransactionsByUser(userId,
+                fromDate, toDate, filterParams.MinAmount, filterParams.MaxAmount);
+            
+            if (filteredTransactions == null) return null;
+
+            var adjustedFilteredTransactions = filteredTransactions.Select(t => 
+            {
+                var temp = _mapper.Map<TransactionReadDto>(t);
+                temp.Type = Enum.GetName(typeof(TransactionType), t.Type);
+                return temp;
+            }).ToList();
+
+            return adjustedFilteredTransactions;
+        }
+
         public TransactionReadDto AddTransaction(TransactionCreateDto transactionCreateDto)
         {
             TransactionType type = (TransactionType)Enum.Parse(typeof(TransactionType), transactionCreateDto.Type);
@@ -70,7 +90,7 @@ namespace BudgetManagementBackend.Services.Services
 
             bool successfulUpdate = _uow.TransactionRepository.Update(updatedTransaction);
 
-            return successfulUpdate;   
+            return successfulUpdate;
         }
 
         public bool DeleteTransaction(int id)

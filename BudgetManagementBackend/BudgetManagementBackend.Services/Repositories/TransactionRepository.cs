@@ -31,6 +31,21 @@ namespace BudgetManagementBackend.Services.Repositories
             }
         }
 
+        public List<Transaction> GetFilteredTransactionsByUser(int userId, DateTime fromDate, DateTime toDate, double minAmount, double maxAmount)
+        {
+            try
+            {
+                return _context.Transactions.Where(t => t.UserId == userId && t.Date >= fromDate && 
+                    t.Date <= toDate && t.Amount >= minAmount && t.Amount <= maxAmount)
+                        .OrderByDescending(t => t.Amount).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
         public Transaction Create(Transaction transaction)
         {
             try

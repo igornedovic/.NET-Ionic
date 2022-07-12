@@ -85,7 +85,7 @@ export class TransactionService {
       }),
       take(1),
       tap((transations) => {
-        newTransaction.id = generatedId;
+        newTransaction.transactionId = generatedId;
         const newTransactions = transations.concat(newTransaction);
         this._transactions.next(newTransactions);
         this.changeBalance(newTransactions);
@@ -133,6 +133,29 @@ export class TransactionService {
     );
   }
 
+  getFilteredTransactions(
+    fromDate: string,
+    toDate: string,
+    minAmount: number,
+    maxAmount: number
+  ) {
+    let fetchedUserId: number;
+
+    return this.authService.userId.pipe(
+      take(1),
+      tap((userId) => {
+        fetchedUserId = userId;
+      }),
+      take(1),
+      switchMap(() => {
+        return this.http.get<TransactionData[]>(
+          this.apiUrl +
+            `user/${fetchedUserId}/transactionsToFilter?fromDate=${fromDate}&toDate=${toDate}&minAmount=${minAmount}&maxAmount=${maxAmount}`
+        );
+      })
+    );
+  }
+
   updateTransaction(id: number, transactionData: TransactionData) {
     let updatedTransactions: Transaction[];
 
@@ -147,7 +170,7 @@ export class TransactionService {
       }),
       switchMap((transactions) => {
         const updatedTransactionIndex = transactions.findIndex(
-          (pl) => pl.id === id
+          (pl) => pl.transactionId === id
         );
         updatedTransactions = [...transactions];
         const oldTransaction = updatedTransactions[updatedTransactionIndex];
@@ -190,7 +213,7 @@ export class TransactionService {
     return this.transactions.pipe(
       take(1),
       switchMap((transactions) => {
-        newTransactions = transactions.filter((t) => t.id !== id);
+        newTransactions = transactions.filter((t) => t.transactionId !== id);
 
         return this.http.delete(this.apiUrl + `transaction/${id}`, {
           responseType: 'text',

@@ -28,8 +28,8 @@ export class SearchModalComponent implements OnInit {
 
     this.modalCtrl.dismiss(
       {
-        fromDate: new Date(modalForm.value.fromDate),
-        toDate: new Date(modalForm.value.toDate),
+        fromDate: new Date(modalForm.value.fromDate).toISOString().slice(0, 10),
+        toDate: new Date(modalForm.value.toDate).toISOString().slice(0, 10),
         range: modalForm.value.range,
       },
       'confirm'

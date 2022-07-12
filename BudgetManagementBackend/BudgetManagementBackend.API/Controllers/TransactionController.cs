@@ -35,6 +35,21 @@ namespace BudgetManagementBackend.API.Controllers
             return Ok(transactions);
         }
 
+        // GET api/user/{userId}/transactionsToFilter
+        [Route("~/api/user/{userId}/transactionsToFilter")]
+        [HttpGet]
+        public ActionResult<List<TransactionReadDto>> GetFilteredTransactionsByUser(int userId, 
+            [FromQuery] FilterParams filterParams) 
+        {
+            var filteredTransactions = _transactionService.GetFilteredTransactionsByUser(userId,
+                filterParams);
+            
+            if (filteredTransactions == null || filteredTransactions.Count == 0) 
+                return NotFound("Could not find transactions based on a given criteria.");
+            
+            return Ok(filteredTransactions);
+        }
+
         // POST api/transaction
         [HttpPost]
         public ActionResult<TransactionReadDto> AddTransaction(TransactionCreateDto transactionCreateDto)

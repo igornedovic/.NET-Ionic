@@ -49,7 +49,7 @@ export class HomePage implements OnInit, OnDestroy {
     this.nav.navigateForward('/new-transaction', {
       state: {
         title: 'Edit transaction',
-        id: transaction.id,
+        id: transaction.transactionId,
         type: transaction.type,
         purpose: transaction.purpose,
         amount: transaction.amount,
