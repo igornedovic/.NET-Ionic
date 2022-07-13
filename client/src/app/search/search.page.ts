@@ -15,10 +15,12 @@ import { StatsComponent } from './stats/stats.component';
   templateUrl: './search.page.html',
   styleUrls: ['./search.page.scss'],
 })
-export class SearchPage implements OnInit {
+export class SearchPage implements OnInit, OnDestroy {
+  transactions: Transaction[];
   searchedTransactions: Transaction[];
   depositNumber: number;
   withdrawalNumber: number;
+  private transactionSub: Subscription;
 
   @ViewChild(StatsComponent) statsComponent;
 
@@ -28,7 +30,13 @@ export class SearchPage implements OnInit {
   constructor(
     private modalCtrl: ModalController,
     private transactionService: TransactionService
-  ) {}
+  ) {
+    this.transactionSub = this.transactionService.transactions.subscribe(
+      (transactions) => {
+        this.transactions = transactions;
+      }
+    );
+  }
 
   ngOnInit() {}
 
@@ -36,7 +44,7 @@ export class SearchPage implements OnInit {
     this.modalCtrl
       .create({
         component: SearchModalComponent,
-        componentProps: { title: 'Add filters' },
+        componentProps: { title: 'Add filters', transactions: this.transactions },
       })
       .then((modal) => {
         modal.present();
@@ -52,9 +60,12 @@ export class SearchPage implements OnInit {
               modalData.data.range.upper
             )
             .subscribe((response) => {
-              console.log(response);
               this.searchedTransactions = response;
+
               this.changeChartParameters(this.searchedTransactions);
+            }, error => {
+              this.searchedTransactions = null;
+              this.notFound = true;
             });
 
           
@@ -64,7 +75,7 @@ export class SearchPage implements OnInit {
 
   changeChartParameters(transactions: Transaction[]) {
     if (
-      transactions.length === 0
+      !transactions || transactions.length === 0
     ) {
       this.notFound = true;
     } else {
@@ -83,6 +94,12 @@ export class SearchPage implements OnInit {
 
         this.statsComponent.donutChart.update();
       }
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.transactionSub) {
+      this.transactionSub.unsubscribe();
     }
   }
 }
