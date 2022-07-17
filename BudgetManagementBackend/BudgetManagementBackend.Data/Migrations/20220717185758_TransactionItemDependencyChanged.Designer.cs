@@ -4,14 +4,16 @@ using BudgetManagementBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BudgetManagementBackend.Data.Migrations
 {
     [DbContext(typeof(BudgetDbContext))]
-    partial class BudgetDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220717185758_TransactionItemDependencyChanged")]
+    partial class TransactionItemDependencyChanged
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,13 +47,17 @@ namespace BudgetManagementBackend.Data.Migrations
                     b.Property<int>("ItemCategoryId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ItemCategoryId1")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("PurposeId");
 
                     b.HasIndex("ItemCategoryId");
+
+                    b.HasIndex("ItemCategoryId1");
 
                     b.ToTable("Purposes");
                 });
@@ -124,11 +130,15 @@ namespace BudgetManagementBackend.Data.Migrations
 
             modelBuilder.Entity("BudgetManagementBackend.Data.Models.Purpose", b =>
                 {
-                    b.HasOne("BudgetManagementBackend.Data.Models.ItemCategory", "ItemCategory")
-                        .WithMany()
+                    b.HasOne("BudgetManagementBackend.Data.Models.ItemCategory", null)
+                        .WithMany("Purposes")
                         .HasForeignKey("ItemCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("BudgetManagementBackend.Data.Models.ItemCategory", "ItemCategory")
+                        .WithMany()
+                        .HasForeignKey("ItemCategoryId1");
 
                     b.Navigation("ItemCategory");
                 });
@@ -186,6 +196,11 @@ namespace BudgetManagementBackend.Data.Migrations
                     b.Navigation("TransactionItems");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BudgetManagementBackend.Data.Models.ItemCategory", b =>
+                {
+                    b.Navigation("Purposes");
                 });
 #pragma warning restore 612, 618
         }

@@ -41,16 +41,15 @@ namespace BudgetManagementBackend.Data
             modelBuilder.Entity<Transaction>().OwnsMany(t => t.TransactionItems, ti =>
             {
                 ti.WithOwner(ti => ti.Transaction);
-                ti.HasOne(ti => ti.ItemCategory).WithMany().HasForeignKey(ti => ti.ItemCategoryId).OnDelete(DeleteBehavior.Restrict);
+                ti.HasOne(ti => ti.Purpose).WithMany().HasForeignKey(ti => ti.PurposeId).OnDelete(DeleteBehavior.Restrict);
             });
+
+            modelBuilder.Entity<Purpose>().Property(p => p.Name).IsRequired();
+            modelBuilder.Entity<Purpose>().HasOne(ic => ic.ItemCategory).WithMany().HasForeignKey(ic => ic.ItemCategoryId);
 
             modelBuilder.Entity<ItemCategory>().Property(ic => ic.Name).IsRequired();
             modelBuilder.Entity<ItemCategory>().Property(ic => ic.Name)
                 .HasConversion(ic => ic.ToString(), ic => (CategoryName)Enum.Parse(typeof(CategoryName), ic));
-            modelBuilder.Entity<ItemCategory>().OwnsMany(ic => ic.Purposes, p =>
-            {
-                p.WithOwner(p => p.ItemCategory);
-            });
         }
     }
 }

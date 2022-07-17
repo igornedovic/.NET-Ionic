@@ -25,9 +25,7 @@ namespace BudgetManagementBackend.API.Helpers
                      DateTime.ParseExact(src.Date, "yyyy-MM-dd", null)));
             CreateMap<TransactionItem, TransactionItemReadDto>();
 
-            CreateMap<ItemCategory, ItemCategoryDto>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src =>
-                    src.Name));
+            CreateMap<ItemCategory, ItemCategoryDto>();
             CreateMap<Purpose, PurposeDto>();
         }
     }

@@ -9,6 +9,5 @@ namespace BudgetManagementBackend.Data.DTOs
     {
         public int ItemCategoryId { get; set; }
         public string Name { get; set; }
-        public List<PurposeDto> Purposes { get; set; }
     }
 }

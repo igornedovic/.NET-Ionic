@@ -16,6 +16,5 @@ namespace BudgetManagementBackend.Data.Models
     {
         public int ItemCategoryId { get; set; }
         public CategoryName Name { get; set; }
-        public List<Purpose> Purposes { get; set; }
     }
 }

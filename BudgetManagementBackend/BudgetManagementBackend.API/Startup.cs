@@ -39,7 +39,7 @@ namespace BudgetManagementBackend.API
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); ;
 
             services.AddCors(options =>
             {
@@ -60,6 +60,7 @@ namespace BudgetManagementBackend.API
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IItemCategoryService, ItemCategoryService>();
+            services.AddScoped<IPurposeService, PurposeService>();
 
             services.AddAuthentication(options =>
             {

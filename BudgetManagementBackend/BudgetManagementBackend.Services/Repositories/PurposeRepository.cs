@@ -9,19 +9,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BudgetManagementBackend.Services.Repositories
 {
-    public class ItemCategoryRepository : IItemCategoryRepository
+    public class PurposeRepository : IPurposeRepository
     {
         private readonly BudgetDbContext _context;
 
-        public ItemCategoryRepository(BudgetDbContext context)
+        public PurposeRepository(BudgetDbContext context)
         {
             _context = context;
         }
-        public List<ItemCategory> GetAll()
+        public List<Purpose> GetAll()
         {
             try
             {
-                return _context.ItemCategories.ToList();
+                return _context.Purposes.Include(ic => ic.ItemCategory)
+                                        .ToList();
             }
             catch (Exception ex)
             {
@@ -30,22 +31,21 @@ namespace BudgetManagementBackend.Services.Repositories
             }
         }
 
-        public ItemCategory GetById(int id)
+        public Purpose GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+        public Purpose Create(Purpose t)
         {
             throw new NotImplementedException();
         }
 
-        public ItemCategory Create(ItemCategory t)
+        public bool Update(Purpose t)
         {
             throw new NotImplementedException();
         }
 
-        public bool Update(ItemCategory t)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Delete(ItemCategory t)
+        public bool Delete(Purpose t)
         {
             throw new NotImplementedException();
         }

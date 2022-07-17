@@ -13,7 +13,7 @@ namespace BudgetManagementBackend.Data.Models
         public string ImageUrl { get; set; }
         public int TransactionId { get; set; }
         public Transaction Transaction { get; set; }
-        public int ItemCategoryId { get; set; }
-        public ItemCategory ItemCategory { get; set; }
+        public int PurposeId { get; set; }
+        public Purpose Purpose { get; set; }
     }
 }

@@ -12,6 +12,6 @@ namespace BudgetManagementBackend.Data.DTOs
         public double Amount { get; set; }
         public string ImageUrl { get; set; }
         public int TransactionId { get; set; }
-        public int ItemCategoryId { get; set; }
+        public PurposeDto Purpose { get; set; }
     }
 }

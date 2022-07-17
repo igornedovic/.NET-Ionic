@@ -22,7 +22,10 @@ namespace BudgetManagementBackend.Services.Repositories
         {
             try
             {
-                return _context.Transactions.Where(t => t.UserId == userId).ToList();
+                return _context.Transactions.Include(ti => ti.TransactionItems)
+                                            .ThenInclude(p => p.Purpose)
+                                            .ThenInclude(ic => ic.ItemCategory)
+                                            .Where(t => t.UserId == userId).ToList();
             }
             catch (Exception ex)
             {

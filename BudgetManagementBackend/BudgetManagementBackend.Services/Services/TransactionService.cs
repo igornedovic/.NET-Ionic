@@ -26,14 +26,14 @@ namespace BudgetManagementBackend.Services.Services
 
             if (transactions == null) return null;
 
-            var adjustedTransactions = transactions.Select(t =>
-            {
-                var temp = _mapper.Map<TransactionReadDto>(t);
-                temp.Type = Enum.GetName(typeof(TransactionType), t.Type);
-                return temp;
-            }).ToList();
+            // var adjustedTransactions = transactions.Select(t =>
+            // {
+            //     var temp = _mapper.Map<TransactionReadDto>(t);
+            //     temp.Type = Enum.GetName(typeof(TransactionType), t.Type);
+            //     return temp;
+            // }).ToList();
 
-            return adjustedTransactions;
+            return _mapper.Map<List<TransactionReadDto>>(transactions);
         }
 
         public List<TransactionReadDto> GetFilteredTransactionsByUser(int userId, FilterParams filterParams)
@@ -58,12 +58,7 @@ namespace BudgetManagementBackend.Services.Services
 
         public TransactionReadDto AddTransaction(TransactionCreateDto transactionCreateDto)
         {
-            // TransactionType type = (TransactionType)Enum.Parse(typeof(TransactionType), transactionCreateDto.Type);
-            // DateTime date = DateTime.ParseExact(transactionCreateDto.Date, "yyyy-MM-dd", null);
-
             var transaction = _mapper.Map<Transaction>(transactionCreateDto);
-            // transaction.Type = type;
-            // transaction.Date = date;
 
             transaction = _uow.TransactionRepository.Create(transaction);
 
