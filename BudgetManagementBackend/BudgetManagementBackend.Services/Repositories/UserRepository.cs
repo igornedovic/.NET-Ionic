@@ -90,5 +90,10 @@ namespace BudgetManagementBackend.Services.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public List<User> GetAll()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

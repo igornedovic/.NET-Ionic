@@ -9,6 +9,7 @@ namespace BudgetManagementBackend.Data.Interfaces
     {
         public ITransactionRepository TransactionRepository { get; set; }
         public IUserRepository UserRepository { get; set; }
+        public IItemCategoryRepository ItemCategoryRepository { get; set; }
         public void Commit();
     }
 }

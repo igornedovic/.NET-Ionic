@@ -7,6 +7,7 @@ namespace BudgetManagementBackend.Data.Interfaces
 {
     public interface IRepository<T> where T : class
     {
+        public List<T> GetAll();
         public T GetById(int id);
         public T Create(T t);
         public bool Update(T t);

@@ -56,9 +56,10 @@ namespace BudgetManagementBackend.API
             });
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<IItemCategoryService, ItemCategoryService>();
 
             services.AddAuthentication(options =>
             {

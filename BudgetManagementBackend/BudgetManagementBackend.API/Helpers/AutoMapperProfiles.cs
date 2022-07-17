@@ -16,6 +16,10 @@ namespace BudgetManagementBackend.API.Helpers
             CreateMap<User, UserReadDto>();
             CreateMap<TransactionCreateDto, Transaction>();
             CreateMap<Transaction, TransactionReadDto>();
+            CreateMap<ItemCategory, ItemCategoryDto>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src =>
+                    src.Name));
+            CreateMap<Purpose, PurposeDto>();
         }
     }
 }

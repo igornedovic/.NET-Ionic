@@ -106,5 +106,10 @@ namespace BudgetManagementBackend.Services.Repositories
                 return false;
             }
         }
+
+        public List<Transaction> GetAll()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
