@@ -58,12 +58,11 @@ namespace BudgetManagementBackend.Services.Services
 
         public TransactionReadDto AddTransaction(TransactionCreateDto transactionCreateDto)
         {
-            TransactionType type = (TransactionType)Enum.Parse(typeof(TransactionType), transactionCreateDto.Type);
-
-            DateTime date = DateTime.ParseExact(transactionCreateDto.Date, "yyyy-MM-dd", null);
+            // TransactionType type = (TransactionType)Enum.Parse(typeof(TransactionType), transactionCreateDto.Type);
+            // DateTime date = DateTime.ParseExact(transactionCreateDto.Date, "yyyy-MM-dd", null);
 
             var transaction = _mapper.Map<Transaction>(transactionCreateDto);
-            transaction.Type = type;
+            // transaction.Type = type;
             // transaction.Date = date;
 
             transaction = _uow.TransactionRepository.Create(transaction);
@@ -82,7 +81,7 @@ namespace BudgetManagementBackend.Services.Services
 
             if (transactionToUpdate == null) return false;
 
-            DateTime date = DateTime.ParseExact(transactionCreateDto.Date, "yyyy-MM-dd", null);
+            // DateTime date = DateTime.ParseExact(transactionCreateDto.Date, "yyyy-MM-dd", null);
 
             var updatedTransaction = _mapper.Map<Transaction>(transactionCreateDto);
             updatedTransaction.TransactionId = transactionToUpdate.TransactionId;

@@ -8,11 +8,10 @@ namespace BudgetManagementBackend.Data.DTOs
 {
     public class TransactionCreateDto
     {
-        public string Purpose { get; set; }
         public string Type { get; set; }
-        public string Date { get; set; }
-        public double Amount { get; set; }
-        public string ImageUrl { get; set; }
+        public string MonthYear { get; set; }
+        public double TotalAmount { get; set; }
         public int UserId { get; set; }
+        public List<TransactionItemCreateDto> TransactionItems { get; set; }
     }
 }

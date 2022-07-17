@@ -14,8 +14,17 @@ namespace BudgetManagementBackend.API.Helpers
         {
             CreateMap<UserCreateDto, User>();
             CreateMap<User, UserReadDto>();
-            CreateMap<TransactionCreateDto, Transaction>();
+
+            CreateMap<TransactionCreateDto, Transaction>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src =>
+                    (TransactionType)Enum.Parse(typeof(TransactionType), src.Type)));
             CreateMap<Transaction, TransactionReadDto>();
+
+            CreateMap<TransactionItemCreateDto, TransactionItem>()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src =>
+                     DateTime.ParseExact(src.Date, "yyyy-MM-dd", null)));
+            CreateMap<TransactionItem, TransactionItemReadDto>();
+
             CreateMap<ItemCategory, ItemCategoryDto>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src =>
                     src.Name));

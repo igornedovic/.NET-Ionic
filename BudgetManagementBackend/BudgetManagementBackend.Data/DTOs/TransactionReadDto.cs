@@ -9,11 +9,10 @@ namespace BudgetManagementBackend.Data.DTOs
     public class TransactionReadDto
     {
         public int TransactionId { get; set; }
-        public string Purpose { get; set; }
         public string Type { get; set; }
-        public DateTime Date { get; set; }
-        public double Amount { get; set; }
-        public string ImageUrl { get; set; }
+        public string MonthYear { get; set; }
+        public double TotalAmount { get; set; }
         public int UserId { get; set; }
+        public List<TransactionItemReadDto> TransactionItems { get; set; }
     }
 }

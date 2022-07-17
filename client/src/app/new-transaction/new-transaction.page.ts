@@ -102,11 +102,12 @@ export class NewTransactionPage implements OnInit, OnDestroy {
   }
 
   onDateChanged(event) {
-    this.monthYear = new Date(event.target.value);
+    this.monthYear = new Date(event.target.value)
+    // console.log(this.monthYear.toISOString().slice(0, 7));
     this.minDate = new Date(this.monthYear.getFullYear(), this.monthYear.getMonth(), 1).toLocaleDateString('en-ca');
     this.maxDate = new Date(this.monthYear.getFullYear(), this.monthYear.getMonth(), 31).toLocaleDateString('en-ca');
-    console.log(this.minDate);
-    console.log(this.maxDate);
+    // console.log(this.minDate);
+    // console.log(this.maxDate);
   }
 
   onAddTransaction() {
