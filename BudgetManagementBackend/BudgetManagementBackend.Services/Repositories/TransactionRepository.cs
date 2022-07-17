@@ -35,9 +35,10 @@ namespace BudgetManagementBackend.Services.Repositories
         {
             try
             {
-                return _context.Transactions.Where(t => t.UserId == userId && t.Date >= fromDate && 
-                    t.Date <= toDate && t.Amount >= minAmount && t.Amount <= maxAmount)
-                        .OrderByDescending(t => t.Amount).ToList();
+                return null;
+                // return _context.Transactions.Where(t => t.UserId == userId && t.Date >= fromDate && 
+                //     t.Date <= toDate && t.Amount >= minAmount && t.Amount <= maxAmount)
+                //         .OrderByDescending(t => t.Amount).ToList();
             }
             catch (Exception ex)
             {

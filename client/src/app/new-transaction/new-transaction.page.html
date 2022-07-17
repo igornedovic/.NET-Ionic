@@ -75,6 +75,15 @@
         </ion-col>
       </ion-row>
 
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-item>
+            <ion-label position="floating">Month/Year:</ion-label>
+            <ion-datetime presentation="month-year" (ionChange)="onDateChanged($event)"></ion-datetime>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
       <ion-row
         *ngIf="transactionForm.get('amount').invalid && transactionForm.get('amount').touched"
       >
@@ -97,7 +106,7 @@
         <ion-col sizeSm="6" offsetSm="3">
           <ion-item>
             <ion-label position="fixed">Date:</ion-label>
-            <ion-input type="date" required formControlName="date"></ion-input>
+            <ion-input type="date" required formControlName="date" [min]="minDate" [max]="maxDate"></ion-input>
           </ion-item>
         </ion-col>
       </ion-row>

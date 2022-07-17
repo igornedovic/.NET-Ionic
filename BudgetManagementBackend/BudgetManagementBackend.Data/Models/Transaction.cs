@@ -8,12 +8,11 @@ namespace BudgetManagementBackend.Data.Models
     public class Transaction
     {
         public int TransactionId { get; set; }
-        public string Purpose { get; set; }
         public TransactionType Type { get; set; }
-        public DateTime Date { get; set; }
-        public double Amount { get; set; }
-        public string ImageUrl { get; set; }
+        public string MonthYear { get; set; }
+        public double TotalAmount { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
+        public List<TransactionItem> TransactionItems { get; set; }
     }
 }

@@ -23,6 +23,9 @@ export class NewTransactionPage implements OnInit, OnDestroy {
   transactionForm: FormGroup;
   balance: number;
   isFetchedImage = false;
+  monthYear: Date;
+  minDate: string;
+  maxDate: string;
 
   private transactionSub: Subscription;
 
@@ -96,6 +99,14 @@ export class NewTransactionPage implements OnInit, OnDestroy {
     }
 
     this.transactionForm.get('amount').updateValueAndValidity();
+  }
+
+  onDateChanged(event) {
+    this.monthYear = new Date(event.target.value);
+    this.minDate = new Date(this.monthYear.getFullYear(), this.monthYear.getMonth(), 1).toLocaleDateString('en-ca');
+    this.maxDate = new Date(this.monthYear.getFullYear(), this.monthYear.getMonth(), 31).toLocaleDateString('en-ca');
+    console.log(this.minDate);
+    console.log(this.maxDate);
   }
 
   onAddTransaction() {

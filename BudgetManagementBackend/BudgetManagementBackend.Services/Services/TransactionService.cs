@@ -64,7 +64,7 @@ namespace BudgetManagementBackend.Services.Services
 
             var transaction = _mapper.Map<Transaction>(transactionCreateDto);
             transaction.Type = type;
-            transaction.Date = date;
+            // transaction.Date = date;
 
             transaction = _uow.TransactionRepository.Create(transaction);
 
@@ -86,7 +86,7 @@ namespace BudgetManagementBackend.Services.Services
 
             var updatedTransaction = _mapper.Map<Transaction>(transactionCreateDto);
             updatedTransaction.TransactionId = transactionToUpdate.TransactionId;
-            updatedTransaction.Date = date;
+            // updatedTransaction.Date = date;
 
             bool successfulUpdate = _uow.TransactionRepository.Update(updatedTransaction);
 
