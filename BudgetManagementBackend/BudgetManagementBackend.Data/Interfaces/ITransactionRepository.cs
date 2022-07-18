@@ -11,5 +11,6 @@ namespace BudgetManagementBackend.Data.Interfaces
         public List<Transaction> GetTransactionsByUser(int userId);
         public List<Transaction> GetFilteredTransactionsByUser(int userId, DateTime fromDate, 
             DateTime toDate, double minAmount, double maxAmount);
+        public Transaction GetTransactionItemsToBeUpdated(Transaction transaction, Transaction transactionToUpdate);
     }
 }

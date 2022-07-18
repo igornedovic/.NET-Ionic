@@ -80,6 +80,21 @@ namespace BudgetManagementBackend.Services.Repositories
             }
         }
 
+        public Transaction GetTransactionItemsToBeUpdated(Transaction transaction, Transaction transactionToUpdate)
+        {
+            foreach (TransactionItem ti in transaction.TransactionItems)
+            {
+                if (!transactionToUpdate.TransactionItems.Contains(ti))
+                {
+                    _context.Entry(ti).State = EntityState.Deleted;
+                }
+            }
+
+            _context.SaveChanges();
+
+            return transactionToUpdate;
+        }
+
         public bool Update(Transaction t)
         {
             try
@@ -114,5 +129,6 @@ namespace BudgetManagementBackend.Services.Repositories
         {
             throw new NotImplementedException();
         }
+
     }
 }

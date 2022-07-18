@@ -15,5 +15,20 @@ namespace BudgetManagementBackend.Data.Models
         public Transaction Transaction { get; set; }
         public int PurposeId { get; set; }
         public Purpose Purpose { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is TransactionItem ti) 
+            {
+                return ti.TransactionItemId == this.TransactionItemId;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return TransactionItemId.GetHashCode();
+        }
     }
 }
