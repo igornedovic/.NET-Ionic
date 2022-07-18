@@ -38,10 +38,17 @@ namespace BudgetManagementBackend.Services.Repositories
         {
             try
             {
-                return null;
-                // return _context.Transactions.Where(t => t.UserId == userId && t.Date >= fromDate && 
-                //     t.Date <= toDate && t.Amount >= minAmount && t.Amount <= maxAmount)
-                //         .OrderByDescending(t => t.Amount).ToList();
+                return _context.Transactions.AsNoTracking().Where(t => t.UserId == userId)
+                                            .Select(tf => new  Transaction {
+                                                TransactionId = tf.TransactionId,
+                                                Type = tf.Type,
+                                                MonthYear = tf.MonthYear,
+                                                TotalAmount = tf.TotalAmount,
+                                                UserId = tf.UserId,
+                                                TransactionItems = tf.TransactionItems.Where(ti => ti.Date >= fromDate && ti.Date <= toDate && ti.Amount >= minAmount && ti.Amount <= maxAmount).ToList()
+                                            })
+                                            .Where(tf => tf.TransactionItems.Count > 0)
+                                            .ToList();
             }
             catch (Exception ex)
             {

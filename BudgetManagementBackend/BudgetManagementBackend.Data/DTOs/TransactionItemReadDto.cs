@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace BudgetManagementBackend.Data.DTOs
 {
@@ -13,6 +13,7 @@ namespace BudgetManagementBackend.Data.DTOs
         public double Amount { get; set; }
         public string ImageUrl { get; set; }
         public int TransactionId { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public PurposeDto Purpose { get; set; }
     }
 }

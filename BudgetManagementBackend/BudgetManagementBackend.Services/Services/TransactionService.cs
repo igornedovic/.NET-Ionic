@@ -39,14 +39,14 @@ namespace BudgetManagementBackend.Services.Services
             
             if (filteredTransactions == null) return null;
 
-            var adjustedFilteredTransactions = filteredTransactions.Select(t => 
-            {
-                var temp = _mapper.Map<TransactionReadDto>(t);
-                temp.Type = Enum.GetName(typeof(TransactionType), t.Type);
-                return temp;
-            }).ToList();
+            // var adjustedFilteredTransactions = filteredTransactions.Select(t => 
+            // {
+            //     var temp = _mapper.Map<TransactionReadDto>(t);
+            //     temp.Type = Enum.GetName(typeof(TransactionType), t.Type);
+            //     return temp;
+            // }).ToList();
 
-            return adjustedFilteredTransactions;
+            return _mapper.Map<List<TransactionReadDto>>(filteredTransactions);
         }
 
         public TransactionReadDto AddTransaction(TransactionCreateDto transactionCreateDto)

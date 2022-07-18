@@ -35,10 +35,10 @@ namespace BudgetManagementBackend.API.Controllers
             return Ok(transactions);
         }
 
-        // GET api/user/{userId}/transactionsToFilter
-        [Route("~/api/user/{userId}/transactionsToFilter")]
+        // GET api/user/{userId}/transactionItemsToFilter
+        [Route("~/api/user/{userId}/transactionItemsToFilter")]
         [HttpGet]
-        public ActionResult<List<TransactionReadDto>> GetFilteredTransactionsByUser(int userId, 
+        public ActionResult<List<TransactionReadDto>> GetFilteredTransactionItemsByUser(int userId, 
             [FromQuery] FilterParams filterParams) 
         {
             var filteredTransactions = _transactionService.GetFilteredTransactionsByUser(userId,
