@@ -5,17 +5,16 @@ import { map, switchMap, take, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
 import { AuthService } from '../auth/auth.service';
-import { Transaction } from './transaction.model';
+import { Transaction, TransactionItem } from './transaction.model';
 import { TransactionType } from './transaction.model';
 
 interface TransactionData {
   transactionId: number;
   type: TransactionType;
-  purpose: string;
-  amount: number;
-  date: Date;
-  imageUrl: string;
+  monthYear: string;
+  totalAmount: number;
   userId: number;
+  transactionItems: TransactionItem[];
 }
 
 @Injectable({
@@ -48,49 +47,50 @@ export class TransactionService {
   }
 
   addTransaction(transactionData: TransactionData, imageUrl: string) {
-    let fetchedUserId: number;
-    let newTransaction: Transaction;
-    let generatedId: number;
+    return of(1);
+    // let fetchedUserId: number;
+    // let newTransaction: Transaction;
+    // let generatedId: number;
 
-    return this.authService.userId.pipe(
-      take(1),
-      tap((userId) => {
-        fetchedUserId = userId;
-      }),
-      take(1),
-      switchMap(() => {
-        newTransaction = new Transaction(
-          null,
-          transactionData.type,
-          transactionData.purpose,
-          +transactionData.amount,
-          new Date(transactionData.date),
-          imageUrl,
-          fetchedUserId
-        );
+    // return this.authService.userId.pipe(
+    //   take(1),
+    //   tap((userId) => {
+    //     fetchedUserId = userId;
+    //   }),
+    //   take(1),
+    //   switchMap(() => {
+    //     newTransaction = new Transaction(
+    //       null,
+    //       transactionData.type,
+    //       transactionData.purpose,
+    //       +transactionData.amount,
+    //       new Date(transactionData.date),
+    //       imageUrl,
+    //       fetchedUserId
+    //     );
 
-        return this.http.post<TransactionData>(this.apiUrl + 'transaction', {
-          purpose: newTransaction.purpose,
-          type: newTransaction.type.toString(),
-          date: newTransaction.date.toISOString().slice(0, 10),
-          amount: newTransaction.amount,
-          imageUrl: newTransaction.imageUrl,
-          userId: newTransaction.userId,
-        });
-      }),
-      take(1),
-      switchMap((response) => {
-        generatedId = response.transactionId;
-        return this.transactions;
-      }),
-      take(1),
-      tap((transations) => {
-        newTransaction.transactionId = generatedId;
-        const newTransactions = transations.concat(newTransaction);
-        this._transactions.next(newTransactions);
-        this.changeBalance(newTransactions);
-      })
-    );
+    //     return this.http.post<TransactionData>(this.apiUrl + 'transaction', {
+    //       purpose: newTransaction.purpose,
+    //       type: newTransaction.type.toString(),
+    //       date: newTransaction.date.toISOString().slice(0, 10),
+    //       amount: newTransaction.amount,
+    //       imageUrl: newTransaction.imageUrl,
+    //       userId: newTransaction.userId,
+    //     });
+    //   }),
+    //   take(1),
+    //   switchMap((response) => {
+    //     generatedId = response.transactionId;
+    //     return this.transactions;
+    //   }),
+    //   take(1),
+    //   tap((transations) => {
+    //     newTransaction.transactionId = generatedId;
+    //     const newTransactions = transations.concat(newTransaction);
+    //     this._transactions.next(newTransactions);
+    //     this.changeBalance(newTransactions);
+    //   })
+    // );
   }
 
   getTransactions() {
@@ -115,11 +115,10 @@ export class TransactionService {
             new Transaction(
               t.transactionId,
               t.type,
-              t.purpose,
-              +t.amount,
-              new Date(t.date),
-              t.imageUrl,
-              t.userId
+              t.monthYear,
+              t.totalAmount,
+              t.userId,
+              t.transactionItems
             )
           );
         });
@@ -157,54 +156,54 @@ export class TransactionService {
   }
 
   updateTransaction(id: number, transactionData: TransactionData) {
-    let updatedTransactions: Transaction[];
+    // let updatedTransactions: Transaction[];
 
-    return this.transactions.pipe(
-      take(1),
-      switchMap((transactions) => {
-        if (!transactions || transactions.length <= 0) {
-          return this.getTransactions();
-        } else {
-          return of(transactions);
-        }
-      }),
-      switchMap((transactions) => {
-        const updatedTransactionIndex = transactions.findIndex(
-          (pl) => pl.transactionId === id
-        );
-        updatedTransactions = [...transactions];
-        const oldTransaction = updatedTransactions[updatedTransactionIndex];
-        updatedTransactions[updatedTransactionIndex] = new Transaction(
-          id,
-          transactionData.type,
-          transactionData.purpose,
-          +transactionData.amount,
-          new Date(transactionData.date),
-          transactionData.imageUrl,
-          oldTransaction.userId
-        );
+    // return this.transactions.pipe(
+    //   take(1),
+    //   switchMap((transactions) => {
+    //     if (!transactions || transactions.length <= 0) {
+    //       return this.getTransactions();
+    //     } else {
+    //       return of(transactions);
+    //     }
+    //   }),
+    //   switchMap((transactions) => {
+    //     const updatedTransactionIndex = transactions.findIndex(
+    //       (pl) => pl.transactionId === id
+    //     );
+    //     updatedTransactions = [...transactions];
+    //     const oldTransaction = updatedTransactions[updatedTransactionIndex];
+    //     updatedTransactions[updatedTransactionIndex] = new Transaction(
+    //       id,
+    //       transactionData.type,
+    //       transactionData.purpose,
+    //       +transactionData.amount,
+    //       new Date(transactionData.date),
+    //       transactionData.imageUrl,
+    //       oldTransaction.userId
+    //     );
 
-        return this.http.put(
-          this.apiUrl + `transaction/${id}`,
-          {
-            purpose: updatedTransactions[updatedTransactionIndex].purpose,
-            type: updatedTransactions[updatedTransactionIndex].type.toString(),
-            date: updatedTransactions[updatedTransactionIndex].date
-              .toISOString()
-              .slice(0, 10),
-            amount: updatedTransactions[updatedTransactionIndex].amount,
-            imageUrl: updatedTransactions[updatedTransactionIndex].imageUrl,
-            userId: updatedTransactions[updatedTransactionIndex].userId,
-          },
-          { responseType: 'text' }
-        );
-      }),
-      tap((response) => {
-        this._transactions.next(updatedTransactions);
-        this.changeBalance(updatedTransactions);
-        return response;
-      })
-    );
+    //     return this.http.put(
+    //       this.apiUrl + `transaction/${id}`,
+    //       {
+    //         purpose: updatedTransactions[updatedTransactionIndex].purpose,
+    //         type: updatedTransactions[updatedTransactionIndex].type.toString(),
+    //         date: updatedTransactions[updatedTransactionIndex].date
+    //           .toISOString()
+    //           .slice(0, 10),
+    //         amount: updatedTransactions[updatedTransactionIndex].amount,
+    //         imageUrl: updatedTransactions[updatedTransactionIndex].imageUrl,
+    //         userId: updatedTransactions[updatedTransactionIndex].userId,
+    //       },
+    //       { responseType: 'text' }
+    //     );
+    //   }),
+    //   tap((response) => {
+    //     this._transactions.next(updatedTransactions);
+    //     this.changeBalance(updatedTransactions);
+    //     return response;
+    //   })
+    // );
   }
 
   deleteTransaction(id: number) {
@@ -228,16 +227,16 @@ export class TransactionService {
   }
 
   changeBalance(transactions: Transaction[]) {
-    let newBalance = 0;
+    // let newBalance = 0;
 
-    transactions.forEach((t) => {
-      if (t.type === TransactionType.Deposit) {
-        newBalance += t.amount;
-      } else {
-        newBalance -= t.amount;
-      }
-    });
+    // transactions.forEach((t) => {
+    //   if (t.type === TransactionType.Deposit) {
+    //     newBalance += t.amount;
+    //   } else {
+    //     newBalance -= t.amount;
+    //   }
+    // });
 
-    this._balance.next(newBalance);
+    // this._balance.next(newBalance);
   }
 }

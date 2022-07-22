@@ -29,3 +29,9 @@
 ion-card * {
   --background: #edebeb;
 }
+
+.flex-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

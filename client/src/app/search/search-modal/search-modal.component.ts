@@ -19,8 +19,8 @@ export class SearchModalComponent implements OnInit {
   constructor(private modalCtrl: ModalController) {}
 
   ngOnInit() {
-    const amounts = this.transactions.map(t => t.amount);
-    this.max = Math.max(...amounts);
+    // const amounts = this.transactions.map(t => t.amount);
+    // this.max = Math.max(...amounts);
   }
 
   onCancel() {

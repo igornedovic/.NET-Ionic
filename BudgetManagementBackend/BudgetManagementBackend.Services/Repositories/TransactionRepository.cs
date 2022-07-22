@@ -38,7 +38,8 @@ namespace BudgetManagementBackend.Services.Repositories
         {
             try
             {
-                return _context.Transactions.AsNoTracking().Where(t => t.UserId == userId)
+                return _context.Transactions.AsNoTracking()
+                                            .Where(t => t.UserId == userId)
                                             .Select(tf => new  Transaction {
                                                 TransactionId = tf.TransactionId,
                                                 Type = tf.Type,
