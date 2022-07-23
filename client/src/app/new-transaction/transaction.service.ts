@@ -132,6 +132,33 @@ export class TransactionService {
     );
   }
 
+  getTransaction(id: number) {
+    let fetchedUserId: number;
+
+    return this.authService.userId.pipe(
+      take(1),
+      tap((userId) => {
+        fetchedUserId = userId;
+      }),
+      take(1),
+      switchMap(() => {
+        return this.http.get<TransactionData>(
+          this.apiUrl + `user/${fetchedUserId}/transactions/${id}`
+        );
+      }),
+      map((transactionsResponse) => {
+        return new Transaction(
+          transactionsResponse.transactionId,
+          transactionsResponse.type,
+          transactionsResponse.monthYear,
+          transactionsResponse.totalAmount,
+          transactionsResponse.userId,
+          transactionsResponse.transactionItems
+        );
+      })
+    );
+  }
+
   getFilteredTransactions(
     fromDate: string,
     toDate: string,
@@ -157,7 +184,6 @@ export class TransactionService {
 
   updateTransaction(id: number, transactionData: TransactionData) {
     // let updatedTransactions: Transaction[];
-
     // return this.transactions.pipe(
     //   take(1),
     //   switchMap((transactions) => {
@@ -182,7 +208,6 @@ export class TransactionService {
     //       transactionData.imageUrl,
     //       oldTransaction.userId
     //     );
-
     //     return this.http.put(
     //       this.apiUrl + `transaction/${id}`,
     //       {
@@ -228,7 +253,6 @@ export class TransactionService {
 
   changeBalance(transactions: Transaction[]) {
     // let newBalance = 0;
-
     // transactions.forEach((t) => {
     //   if (t.type === TransactionType.Deposit) {
     //     newBalance += t.amount;
@@ -236,7 +260,6 @@ export class TransactionService {
     //     newBalance -= t.amount;
     //   }
     // });
-
     // this._balance.next(newBalance);
   }
 }

@@ -6,11 +6,18 @@ const routes: Routes = [
   {
     path: '',
     component: HomePage,
-  }
+  },
+  {
+    path: 'transaction/:transactionId',
+    loadChildren: () =>
+      import('./transaction-detail/transaction-detail.module').then(
+        (m) => m.TransactionDetailPageModule
+      ),
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class HomePageRoutingModule {}

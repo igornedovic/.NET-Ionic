@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Transaction detail</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-text-center" *ngIf="isLoading">
+    <ion-spinner color="primary"></ion-spinner>
+  </div>
+
+  <ion-grid *ngIf="!isLoading">
+    <h2 class="ion-padding">Transaction items:</h2>
+    <ion-card *ngFor="let item of transaction.transactionItems">
+      <ion-card-header>
+        <ion-row class="ion-align-items-center">
+          <ion-col sizeXs="4">
+            <ion-avatar><img class="img" src="{{item.imageUrl}}" /></ion-avatar>
+          </ion-col>
+          <ion-col sizeXs="8">
+            <ion-card-title>Purpose: {{item.purpose.name}}</ion-card-title>
+          </ion-col>
+        </ion-row>
+      </ion-card-header>
+
+      <ion-list class="ion-no-padding">
+        <ion-item>
+          <ion-label
+            >Item category: {{item.purpose.itemCategory.name}}</ion-label
+          >
+        </ion-item>
+        <ion-item>
+          <ion-label>Date: {{item.date | date: 'MM/dd/yyyy'}}</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label
+            [color]="transaction.type === 'Deposit' ? 'success' : 'danger'"
+          >
+            Amount: {{(transaction.type === 'Deposit' ?
+            '+'.concat(item.amount.toString()) :
+            '-'.concat(item.amount.toString())) | number:'1.2-2'}} RSD
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+  </ion-grid>
+</ion-content>
