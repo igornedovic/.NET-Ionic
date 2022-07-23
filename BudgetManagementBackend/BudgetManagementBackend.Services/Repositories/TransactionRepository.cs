@@ -34,13 +34,31 @@ namespace BudgetManagementBackend.Services.Repositories
             }
         }
 
+        public Transaction GetTransactionById(int userId, int id)
+        {
+            try
+            {
+                return _context.Transactions.Include(ti => ti.TransactionItems)
+                                            .ThenInclude(p => p.Purpose)
+                                            .ThenInclude(ic => ic.ItemCategory)
+                                            .SingleOrDefault(t => t.UserId == userId 
+                                                                  && t.TransactionId == id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
         public List<Transaction> GetFilteredTransactionsByUser(int userId, DateTime fromDate, DateTime toDate, double minAmount, double maxAmount)
         {
             try
             {
                 return _context.Transactions.AsNoTracking()
                                             .Where(t => t.UserId == userId)
-                                            .Select(tf => new  Transaction {
+                                            .Select(tf => new Transaction
+                                            {
                                                 TransactionId = tf.TransactionId,
                                                 Type = tf.Type,
                                                 MonthYear = tf.MonthYear,
@@ -137,6 +155,5 @@ namespace BudgetManagementBackend.Services.Repositories
         {
             throw new NotImplementedException();
         }
-
     }
 }

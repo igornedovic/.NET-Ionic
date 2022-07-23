@@ -10,6 +10,7 @@ namespace BudgetManagementBackend.Data.Interfaces
     public interface ITransactionService
     {
         public List<TransactionReadDto> GetAllTransactionByUser(int userId);
+        public TransactionReadDto GetTransactionById(int userId, int id);
         public List<TransactionReadDto> GetFilteredTransactionsByUser(int userId, FilterParams filterParams);
         public TransactionReadDto AddTransaction(TransactionCreateDto transactionCreateDto);
         public bool UpdateTransaction(int id, TransactionCreateDto transactionCreateDto);

@@ -29,6 +29,15 @@ namespace BudgetManagementBackend.Services.Services
             return _mapper.Map<List<TransactionReadDto>>(transactions);
         }
 
+        public TransactionReadDto GetTransactionById(int userId, int id)
+        {
+            var transaction = _uow.TransactionRepository.GetTransactionById(userId, id);
+
+            if (transaction == null) return null;
+
+            return _mapper.Map<TransactionReadDto>(transaction);
+        }
+
         public List<TransactionReadDto> GetFilteredTransactionsByUser(int userId, FilterParams filterParams)
         {
             DateTime fromDate = DateTime.ParseExact(filterParams.FromDate, "yyyy-MM-dd", null);
@@ -36,7 +45,7 @@ namespace BudgetManagementBackend.Services.Services
 
             var filteredTransactions = _uow.TransactionRepository.GetFilteredTransactionsByUser(userId,
                 fromDate, toDate, filterParams.MinAmount, filterParams.MaxAmount);
-            
+
             if (filteredTransactions == null) return null;
 
             // var adjustedFilteredTransactions = filteredTransactions.Select(t => 

@@ -9,6 +9,7 @@ namespace BudgetManagementBackend.Data.Interfaces
     public interface ITransactionRepository : IRepository<Transaction>
     {
         public List<Transaction> GetTransactionsByUser(int userId);
+        public Transaction GetTransactionById(int userId, int id);
         public List<Transaction> GetFilteredTransactionsByUser(int userId, DateTime fromDate, 
             DateTime toDate, double minAmount, double maxAmount);
         public Transaction GetTransactionItemsToBeUpdated(Transaction transaction, Transaction transactionToUpdate);
