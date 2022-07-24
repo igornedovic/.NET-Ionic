@@ -30,7 +30,7 @@ export class Purpose {
 export class ItemCategory {
   constructor(
     public itemCategoryId: number,
-    public name: string
+    public name: CategoryName
   ) {}
 }
 
@@ -38,4 +38,11 @@ export class ItemCategory {
 export enum TransactionType {
     Deposit = "Deposit",
     Withdrawal = "Withdrawal"
+}
+
+export enum CategoryName {
+  PersonalIncome = "PersonalIncome",
+  BusinessIncome = "BusinessIncome",
+  PersonalExpense = "PersonalExpense",
+  BusinessExpense = "BusinessExpense"
 }

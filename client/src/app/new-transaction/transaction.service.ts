@@ -176,8 +176,27 @@ export class TransactionService {
       switchMap(() => {
         return this.http.get<TransactionData[]>(
           this.apiUrl +
-            `user/${fetchedUserId}/transactionsToFilter?fromDate=${fromDate}&toDate=${toDate}&minAmount=${minAmount}&maxAmount=${maxAmount}`
+            `user/${fetchedUserId}/transactionItemsToFilter?fromDate=${fromDate}&toDate=${toDate}&minAmount=${minAmount}&maxAmount=${maxAmount}`
         );
+      }),
+      map(transactionResponse => {
+        const transactionItems: TransactionItem[] = [];
+
+        transactionResponse.forEach(t => {
+          t.transactionItems.forEach(ti => {
+            transactionItems.push(
+              new TransactionItem(
+                ti.transactionItemId,
+                ti.date,
+                ti.amount,
+                ti.imageUrl,
+                ti.purpose
+              )
+            )
+          })
+        })
+
+        return transactionItems;
       })
     );
   }

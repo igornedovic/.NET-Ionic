@@ -41,7 +41,7 @@ namespace BudgetManagementBackend.Services.Repositories
                 return _context.Transactions.Include(ti => ti.TransactionItems)
                                             .ThenInclude(p => p.Purpose)
                                             .ThenInclude(ic => ic.ItemCategory)
-                                            .SingleOrDefault(t => t.UserId == userId 
+                                            .SingleOrDefault(t => t.UserId == userId
                                                                   && t.TransactionId == id);
             }
             catch (Exception ex)
@@ -56,6 +56,9 @@ namespace BudgetManagementBackend.Services.Repositories
             try
             {
                 return _context.Transactions.AsNoTracking()
+                                            .Include(ti => ti.TransactionItems)
+                                            .ThenInclude(p => p.Purpose)
+                                            .ThenInclude(ic => ic.ItemCategory)
                                             .Where(t => t.UserId == userId)
                                             .Select(tf => new Transaction
                                             {

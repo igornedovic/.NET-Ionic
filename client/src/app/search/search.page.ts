@@ -3,8 +3,8 @@ import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
 import {
-  Transaction,
-  TransactionType,
+  CategoryName,
+  TransactionItem,
 } from '../new-transaction/transaction.model';
 import { TransactionService } from '../new-transaction/transaction.service';
 import { SearchModalComponent } from './search-modal/search-modal.component';
@@ -16,10 +16,10 @@ import { StatsComponent } from './stats/stats.component';
   styleUrls: ['./search.page.scss'],
 })
 export class SearchPage implements OnInit, OnDestroy {
-  transactions: Transaction[];
-  searchedTransactions: Transaction[];
-  depositNumber: number;
-  withdrawalNumber: number;
+  transactionItems: TransactionItem[] = [];
+  searchedTransactionItems: TransactionItem[];
+  totalDepositAmount: number;
+  totalWithdrawalAmount: number;
   private transactionSub: Subscription;
 
   @ViewChild(StatsComponent) statsComponent;
@@ -33,7 +33,12 @@ export class SearchPage implements OnInit, OnDestroy {
   ) {
     this.transactionSub = this.transactionService.transactions.subscribe(
       (transactions) => {
-        this.transactions = transactions;
+        transactions.forEach(t => {
+          t.transactionItems.forEach(ti => {
+            console.log(ti);
+            this.transactionItems.push(ti);
+          })
+        })
       }
     );
   }
@@ -44,7 +49,7 @@ export class SearchPage implements OnInit, OnDestroy {
     this.modalCtrl
       .create({
         component: SearchModalComponent,
-        componentProps: { title: 'Add filters', transactions: this.transactions },
+        componentProps: { title: 'Add filters', transactionItems: this.transactionItems },
       })
       .then((modal) => {
         modal.present();
@@ -60,11 +65,11 @@ export class SearchPage implements OnInit, OnDestroy {
               modalData.data.range.upper
             )
             .subscribe((response) => {
-              this.searchedTransactions = response;
+              this.searchedTransactionItems = response;
 
-              this.changeChartParameters(this.searchedTransactions);
+              this.changeChartParameters(this.searchedTransactionItems);
             }, error => {
-              this.searchedTransactions = null;
+              this.searchedTransactionItems = null;
               this.notFound = true;
             });
 
@@ -73,24 +78,24 @@ export class SearchPage implements OnInit, OnDestroy {
       });
   }
 
-  changeChartParameters(transactions: Transaction[]) {
+  changeChartParameters(transactions: TransactionItem[]) {
     if (
       !transactions || transactions.length === 0
     ) {
       this.notFound = true;
     } else {
-      this.depositNumber = transactions.filter(
-        (t) => t.type === TransactionType.Deposit
-      ).length;
-      this.withdrawalNumber = transactions.filter(
-        (t) => t.type === TransactionType.Withdrawal
-      ).length;
+      this.totalDepositAmount = transactions.filter(
+        (t) => t.purpose.itemCategory.name === CategoryName.PersonalIncome || t.purpose.itemCategory.name === CategoryName.BusinessIncome 
+      ).map(t => t.amount).reduce((previous, current) => previous + current, 0);
+      this.totalWithdrawalAmount = transactions.filter(
+        (t) => t.purpose.itemCategory.name === CategoryName.PersonalExpense|| t.purpose.itemCategory.name === CategoryName.BusinessExpense
+      ).map(t => t.amount).reduce((previous, current) => previous + current, 0);
 
       if (this.statsComponent) {
         this.statsComponent.donutChart.data.datasets[0].data[0] =
-          this.depositNumber;
+          this.totalDepositAmount;
         this.statsComponent.donutChart.data.datasets[0].data[1] =
-          this.withdrawalNumber;
+          this.totalWithdrawalAmount;
 
         this.statsComponent.donutChart.update();
       }

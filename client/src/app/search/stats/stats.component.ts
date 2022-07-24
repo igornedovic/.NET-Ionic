@@ -16,8 +16,8 @@ import { Chart, registerables } from 'chart.js';
 })
 export class StatsComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas') private canvas: ElementRef;
-  @Input() depositNumber: number;
-  @Input() withdrawalNumber: number;
+  @Input() totalDepositAmount: number;
+  @Input() totalWithdrawalAmount: number;
 
   donutChart: any;
 
@@ -38,7 +38,7 @@ export class StatsComponent implements OnInit, AfterViewInit {
         labels: ['Deposits', 'Withdrawals'],
         datasets: [
           {
-            data: [this.depositNumber, this.withdrawalNumber],
+            data: [this.totalDepositAmount, this.totalWithdrawalAmount],
             backgroundColor: [
               'rgba(75, 192, 192, 0.2)',
               'rgba(255, 99, 132, 0.2)',

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
-import { Transaction } from 'src/app/new-transaction/transaction.model';
+import { TransactionItem } from 'src/app/new-transaction/transaction.model';
 
 @Component({
   selector: 'app-search-modal',
@@ -13,14 +13,14 @@ export class SearchModalComponent implements OnInit {
   toDate: string;
   range: { lower: number; upper: number };
   max: number;
-  @Input() transactions: Transaction[];
+  @Input() transactionItems: TransactionItem[];
   @Input() title: string;
 
   constructor(private modalCtrl: ModalController) {}
 
   ngOnInit() {
-    // const amounts = this.transactions.map(t => t.amount);
-    // this.max = Math.max(...amounts);
+    const amounts = this.transactionItems.map(t => t.amount);
+    this.max = Math.max(...amounts);
   }
 
   onCancel() {
