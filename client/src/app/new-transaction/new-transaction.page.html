@@ -44,97 +44,33 @@
       <ion-row>
         <ion-col sizeSm="6" offsetSm="3">
           <ion-item>
-            <ion-label position="floating">Purpose:</ion-label>
-            <ion-input
-              type="text"
-              required
-              formControlName="purpose"
-            ></ion-input>
-          </ion-item>
-        </ion-col>
-      </ion-row>
-
-      <ion-row
-        *ngIf="transactionForm.get('purpose').invalid && transactionForm.get('purpose').touched"
-      >
-        <ion-col sizeSm="6" offsetSm="3">
-          <span>Purpose must contain at least 1 character.</span>
-        </ion-col>
-      </ion-row>
-
-      <ion-row>
-        <ion-col sizeSm="6" offsetSm="3">
-          <ion-item>
-            <ion-label position="floating">Amount:</ion-label>
-            <ion-input
-              type="number"
-              required
-              formControlName="amount"
-            ></ion-input>
-          </ion-item>
-        </ion-col>
-      </ion-row>
-
-      <ion-row>
-        <ion-col sizeSm="6" offsetSm="3">
-          <ion-item>
             <ion-label position="floating">Month/Year:</ion-label>
-            <ion-datetime presentation="month-year" (ionChange)="onDateChanged($event)"></ion-datetime>
+            <ion-datetime
+              presentation="month-year"
+              (ionChange)="onDateChanged($event)"
+            ></ion-datetime>
           </ion-item>
         </ion-col>
       </ion-row>
 
       <ion-row
-        *ngIf="transactionForm.get('amount').invalid && transactionForm.get('amount').touched"
+        *ngIf="transactionForm.get('monthYear').invalid && transactionForm.get('monthYear').touched"
       >
         <ion-col sizeSm="6" offsetSm="3">
-          <span *ngIf="transactionForm.get('amount').hasError('required')"
-            >Amount must contain at least 1 digit.</span
-          >
-          <span *ngIf="transactionForm.get('amount').hasError('min')"
-            >Amount must be greater than 0.</span
-          >
-          <span
-            *ngIf="transactionForm.get('amount').hasError('max') && transactionForm.get('type').value == transactionTypes[1]"
-            >Your current balance ({{balance}} RSD) is less than withdrawal
-            amount.</span
-          >
+          <span>Please choose month and year.</span>
         </ion-col>
       </ion-row>
 
       <ion-row>
         <ion-col sizeSm="6" offsetSm="3">
           <ion-item>
-            <ion-label position="fixed">Date:</ion-label>
-            <ion-input type="date" required formControlName="date" [min]="minDate" [max]="maxDate"></ion-input>
+            <ion-label>Transaction items:</ion-label>
+            <ion-buttons slot="end">
+              <ion-fab-button size="small" (click)="openModal()">
+                <ion-icon name="add"></ion-icon>
+              </ion-fab-button>
+            </ion-buttons>
           </ion-item>
-        </ion-col>
-      </ion-row>
-
-      <ion-row
-        *ngIf="transactionForm.get('date').invalid && transactionForm.get('date').touched"
-      >
-        <ion-col sizeSm="6" offsetSm="3">
-          <span>Please enter a valid date.</span>
-        </ion-col>
-      </ion-row>
-
-      <ion-row>
-        <ion-col sizeSm="6" offsetSm="3">
-          <app-image-input
-            [showPreview]="!!transactionForm.get('imageUrl').value"
-            [fetchedImage]="transactionForm.get('imageUrl').value"
-            [isFetchedImage]="isFetchedImage"
-            (imagePick)="onImageImported($event)"
-          ></app-image-input>
-        </ion-col>
-      </ion-row>
-
-      <ion-row
-        *ngIf="transactionForm.get('imageUrl').invalid && transactionForm.get('imageUrl').touched"
-      >
-        <ion-col sizeSm="6" offsetSm="3">
-          <span>Please import image.</span>
         </ion-col>
       </ion-row>
 

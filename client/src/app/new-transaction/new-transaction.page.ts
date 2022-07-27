@@ -6,11 +6,12 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { LoadingController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { LoadingController, ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
+import { NewTransactionModalComponent } from './new-transaction-modal/new-transaction-modal.component';
 import { TransactionType } from './transaction.model';
 import { TransactionService } from './transaction.service';
 
@@ -43,17 +44,19 @@ export class NewTransactionPage implements OnInit, OnDestroy {
   constructor(
     private transactionService: TransactionService,
     private router: Router,
-    private route: ActivatedRoute,
+    private modalCtrl: ModalController,
     private loadingCtrl: LoadingController
   ) {}
 
   ngOnInit() {
     this.transactionForm = new FormGroup({
       type: new FormControl('', Validators.required),
+      monthYear: new FormControl('', Validators.required),
       purpose: new FormControl('', Validators.required),
-      amount: new FormControl('', [Validators.required, Validators.min(1)]),
       date: new FormControl('', Validators.required),
+      amount: new FormControl('', [Validators.required, Validators.min(1)]),
       imageUrl: new FormControl('', Validators.required),
+      totalAmount: new FormControl('', [Validators.required, Validators.min(1)])
     });
 
     this.transactionSub = this.transactionService.balance.subscribe(
@@ -84,6 +87,23 @@ export class NewTransactionPage implements OnInit, OnDestroy {
         this.isFetchedImage = true;
       }
     }
+  }
+
+  openModal() {
+    this.modalCtrl
+      .create({
+        component: NewTransactionModalComponent,
+        componentProps: { title: 'Add item' },
+      })
+      .then((modal) => {
+        modal.present();
+        return modal.onDidDismiss();
+      })
+      .then((modalData) => {
+        if (modalData.role === 'confirm') {
+          console.log("USPESNO");
+        }
+      });
   }
 
   onTypeChange(event) {

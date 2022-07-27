@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-title>{{ title }}</ion-title>
+        <ion-buttons>
+          <ion-button (click)="onCancel()">
+            <ion-icon name="close"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form #modalForm="ngForm" (ngSubmit)="onAddItem(modalForm)">
+    <ion-grid>
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-item>
+            <ion-label position="floating">Purpose:</ion-label>
+            <ion-input
+              type="text"
+              required
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-item>
+            <ion-label position="fixed">Date:</ion-label>
+            <ion-input type="date" required></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-item>
+            <ion-label position="floating">Amount:</ion-label>
+            <ion-input
+              type="number"
+              required
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-button
+            type="submit"
+            color="primary"
+            expand="block"
+          >
+            Add
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { NewTransactionPageRoutingModule } from './new-transaction-routing.module';
 import { NewTransactionPage } from './new-transaction.page';
 import { ImageInputComponent } from './image-input/image-input.component';
+import { NewTransactionModalComponent } from './new-transaction-modal/new-transaction-modal.component';
 
 @NgModule({
   imports: [
@@ -15,6 +16,10 @@ import { ImageInputComponent } from './image-input/image-input.component';
     NewTransactionPageRoutingModule,
     ReactiveFormsModule,
   ],
-  declarations: [NewTransactionPage, ImageInputComponent],
+  declarations: [
+    NewTransactionPage,
+    ImageInputComponent,
+    NewTransactionModalComponent,
+  ],
 })
 export class NewTransactionPageModule {}
