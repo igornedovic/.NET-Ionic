@@ -14,7 +14,7 @@
 </ion-header>
 
 <ion-content>
-  <form #modalForm="ngForm" (ngSubmit)="onAddItem(modalForm)">
+  <form [formGroup]="transactionForm" (ngSubmit)="onAddItem()">
     <ion-grid>
       <ion-row>
         <ion-col sizeSm="6" offsetSm="3">
@@ -23,8 +23,20 @@
             <ion-input
               type="text"
               required
+              formControlName="purpose"
             ></ion-input>
           </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngIf="
+          transactionForm.get('purpose').invalid &&
+          transactionForm.get('purpose').touched
+        "
+      >
+        <ion-col sizeSm="6" offsetSm="3">
+          <span>Purpose must contain at least 1 character.</span>
         </ion-col>
       </ion-row>
 
@@ -32,8 +44,19 @@
         <ion-col sizeSm="6" offsetSm="3">
           <ion-item>
             <ion-label position="fixed">Date:</ion-label>
-            <ion-input type="date" required></ion-input>
+            <ion-input type="date" required [min]="minDate" [max]="maxDate" formControlName="date"></ion-input>
           </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngIf="
+          transactionForm.get('date').invalid &&
+          transactionForm.get('date').touched
+        "
+      >
+        <ion-col sizeSm="6" offsetSm="3">
+          <span>Please enter a valid date.</span>
         </ion-col>
       </ion-row>
 
@@ -44,8 +67,47 @@
             <ion-input
               type="number"
               required
+              formControlName="amount"
             ></ion-input>
           </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngIf="
+          transactionForm.get('amount').invalid &&
+          transactionForm.get('amount').touched
+        "
+      >
+        <ion-col sizeSm="6" offsetSm="3">
+          <span *ngIf="transactionForm.get('amount').hasError('required')"
+            >Amount must contain at least 1 digit.</span
+          >
+          <span *ngIf="transactionForm.get('amount').hasError('min')"
+            >Amount must be greater than 0.</span
+          >
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <app-image-input
+            [showPreview]="!!transactionForm.get('imageUrl').value"
+            [fetchedImage]="transactionForm.get('imageUrl').value"
+            [isFetchedImage]="isFetchedImage"
+            (imagePick)="onImageImported($event)"
+          ></app-image-input>
+        </ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngIf="
+          transactionForm.get('imageUrl').invalid &&
+          transactionForm.get('imageUrl').touched
+        "
+      >
+        <ion-col sizeSm="6" offsetSm="3">
+          <span>Please import image.</span>
         </ion-col>
       </ion-row>
 
@@ -55,6 +117,7 @@
             type="submit"
             color="primary"
             expand="block"
+            [disabled]="!isPopulated"
           >
             Add
           </ion-button>

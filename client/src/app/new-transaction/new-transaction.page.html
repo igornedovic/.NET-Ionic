@@ -76,13 +76,44 @@
 
       <ion-row>
         <ion-col sizeSm="6" offsetSm="3">
+          <ion-item [disabled]="true">
+            <ion-label position="floating">Total amount:</ion-label>
+            <ion-input
+              type="number"
+              required
+              formControlName="totalAmount"
+            ></ion-input>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngIf="transactionForm.get('totalAmount').invalid"
+      >
+        <ion-col sizeSm="6" offsetSm="3">
+          <span *ngIf="transactionForm.get('totalAmount').hasError('required')"
+            >Total amount must contain at least 1 digit.</span
+          >
+          <span *ngIf="transactionForm.get('totalAmount').hasError('min')"
+            >Total amount must be greater than 0.</span
+          >
+          <span
+            *ngIf="transactionForm.get('totalAmount').hasError('max') && transactionForm.get('type').value == transactionTypes[1]"
+            >Your current balance ({{balance}} RSD) is less than withdrawal
+            amount.</span
+          >
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
           <ion-button
             type="submit"
             color="primary"
             expand="block"
             [disabled]="transactionForm.invalid || !transactionForm.touched"
           >
-            {{!title ? 'Add' : 'Edit'}}
+            {{!title ? 'Save' : 'Edit'}}
           </ion-button>
         </ion-col>
       </ion-row>

@@ -271,14 +271,14 @@ export class TransactionService {
   }
 
   changeBalance(transactions: Transaction[]) {
-    // let newBalance = 0;
-    // transactions.forEach((t) => {
-    //   if (t.type === TransactionType.Deposit) {
-    //     newBalance += t.amount;
-    //   } else {
-    //     newBalance -= t.amount;
-    //   }
-    // });
-    // this._balance.next(newBalance);
+    let newBalance = 0;
+    transactions.forEach((t) => {
+      if (t.type === TransactionType.Deposit) {
+        newBalance += t.transactionItems.reduce((previous, current) => previous + current.amount, 0);
+      } else {
+        newBalance -= t.transactionItems.reduce((previous, current) => previous + current.amount, 0);
+      }
+    });
+    this._balance.next(newBalance);
   }
 }

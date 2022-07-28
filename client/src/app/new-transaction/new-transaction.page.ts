@@ -56,7 +56,7 @@ export class NewTransactionPage implements OnInit, OnDestroy {
       date: new FormControl('', Validators.required),
       amount: new FormControl('', [Validators.required, Validators.min(1)]),
       imageUrl: new FormControl('', Validators.required),
-      totalAmount: new FormControl('', [Validators.required, Validators.min(1)])
+      totalAmount: new FormControl(0, [Validators.required, Validators.min(1)]),
     });
 
     this.transactionSub = this.transactionService.balance.subscribe(
@@ -68,6 +68,8 @@ export class NewTransactionPage implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
+    this.transactionForm.get('totalAmount').setValue(0);
+
     if (history.state) {
       this.title = history.state.title;
       this.transactionId = history.state.id;
@@ -93,7 +95,12 @@ export class NewTransactionPage implements OnInit, OnDestroy {
     this.modalCtrl
       .create({
         component: NewTransactionModalComponent,
-        componentProps: { title: 'Add item' },
+        componentProps: {
+          title: 'Add item',
+          transactionForm: this.transactionForm,
+          minDate: this.minDate,
+          maxDate: this.maxDate,
+        },
       })
       .then((modal) => {
         modal.present();
@@ -101,7 +108,16 @@ export class NewTransactionPage implements OnInit, OnDestroy {
       })
       .then((modalData) => {
         if (modalData.role === 'confirm') {
-          console.log("USPESNO");
+          this.transactionForm.get('purpose').setValue(modalData.data.purpose.value);
+          this.transactionForm.get('date').setValue(modalData.data.date.value);
+          this.transactionForm.get('amount').setValue(modalData.data.amount.value);
+          this.transactionForm.get('imageUrl').setValue(modalData.data.imageUrl.value);
+          this.transactionForm
+            .get('totalAmount')
+            .setValue(
+              this.transactionForm.get('totalAmount').value +
+                this.transactionForm.get('amount').value
+            );
         }
       });
   }
@@ -110,52 +126,65 @@ export class NewTransactionPage implements OnInit, OnDestroy {
     const type = event.detail.value;
 
     if (this.transactionForm.get('type').value == this.transactionTypes[1]) {
-      this.transactionForm.get('amount').addValidators(this.maxValidator);
+      this.transactionForm.get('totalAmount').addValidators(this.maxValidator);
     } else if (
       this.transactionForm.get('type').value == this.transactionTypes[0] &&
-      this.transactionForm.get('amount').hasValidator(this.maxValidator)
+      this.transactionForm.get('totalAmount').hasValidator(this.maxValidator)
     ) {
-      this.transactionForm.get('amount').removeValidators(this.maxValidator);
+      this.transactionForm
+        .get('totalAmount')
+        .removeValidators(this.maxValidator);
     }
 
-    this.transactionForm.get('amount').updateValueAndValidity();
+    this.transactionForm.get('totalAmount').updateValueAndValidity();
   }
 
   onDateChanged(event) {
     this.monthYear = new Date(event.target.value);
-    console.log(this.monthYear.toLocaleDateString('en-US', {
-      month: '2-digit',
-      year: 'numeric',
-    }));
-    this.minDate = new Date(this.monthYear.getFullYear(), this.monthYear.getMonth(), 1).toLocaleDateString('en-ca');
-    this.maxDate = new Date(this.monthYear.getFullYear(), this.monthYear.getMonth(), 31).toLocaleDateString('en-ca');
-    // console.log(this.minDate);
-    // console.log(this.maxDate);
+
+    this.transactionForm.get('monthYear').setValue(
+      this.monthYear.toLocaleDateString('en-US', {
+        month: '2-digit',
+        year: 'numeric',
+      })
+    );
+
+    this.minDate = new Date(
+      this.monthYear.getFullYear(),
+      this.monthYear.getMonth(),
+      1
+    ).toLocaleDateString('en-ca');
+    this.maxDate = new Date(
+      this.monthYear.getFullYear(),
+      this.monthYear.getMonth(),
+      31
+    ).toLocaleDateString('en-ca');
   }
 
   onAddTransaction() {
-    this.loadingCtrl
-      .create({
-        message: 'Adding transaction...',
-      })
-      .then((loadingEl) => {
-        loadingEl.present();
-        this.transactionService
-          .uploadImage(this.transactionForm.get('imageUrl').value)
-          .pipe(
-            switchMap((uploadRes) => {
-              return this.transactionService.addTransaction(
-                this.transactionForm.value,
-                uploadRes.url
-              );
-            })
-          )
-          .subscribe(() => {
-            loadingEl.dismiss();
-            this.transactionForm.reset();
-            this.router.navigate(['/home']);
-          });
-      });
+    console.log(this.transactionForm.value);
+    // this.loadingCtrl
+    //   .create({
+    //     message: 'Adding transaction...',
+    //   })
+    //   .then((loadingEl) => {
+    //     loadingEl.present();
+    //     this.transactionService
+    //       .uploadImage(this.transactionForm.get('imageUrl').value)
+    //       .pipe(
+    //         switchMap((uploadRes) => {
+    //           return this.transactionService.addTransaction(
+    //             this.transactionForm.value,
+    //             uploadRes.url
+    //           );
+    //         })
+    //       )
+    //       .subscribe(() => {
+    //         loadingEl.dismiss();
+    //         this.transactionForm.reset();
+    //         this.router.navigate(['/home']);
+    //       });
+    //   });
   }
 
   onUpdateTransaction() {
