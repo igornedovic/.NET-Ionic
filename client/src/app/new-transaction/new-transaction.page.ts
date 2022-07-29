@@ -11,6 +11,8 @@ import { LoadingController, ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
+import { ItemCategoryService } from '../services/item-category.service';
+import { PurposeService } from '../services/purpose.service';
 import { NewTransactionModalComponent } from './new-transaction-modal/new-transaction-modal.component';
 import { TransactionType } from './transaction.model';
 import { TransactionService } from './transaction.service';
@@ -45,7 +47,8 @@ export class NewTransactionPage implements OnInit, OnDestroy {
     private transactionService: TransactionService,
     private router: Router,
     private modalCtrl: ModalController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private itemCategoryService: ItemCategoryService, private purposeService: PurposeService
   ) {}
 
   ngOnInit() {
@@ -65,6 +68,9 @@ export class NewTransactionPage implements OnInit, OnDestroy {
         this.maxValidator = Validators.max(this.balance);
       }
     );
+
+    this.itemCategoryService.getItemCategories().subscribe(data => console.log(data));
+    this.purposeService.getPurposes().subscribe(data => console.log(data));
   }
 
   ionViewWillEnter() {

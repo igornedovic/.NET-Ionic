@@ -18,33 +18,46 @@
     <ion-grid>
       <ion-row>
         <ion-col sizeSm="6" offsetSm="3">
-          <ion-item>
-            <ion-label position="floating">Purpose:</ion-label>
-            <ion-input
-              type="text"
-              required
-              formControlName="purpose"
-            ></ion-input>
-          </ion-item>
+          <ion-label style="padding: 15px">Item category:</ion-label>
         </ion-col>
       </ion-row>
 
-      <ion-row
-        *ngIf="
-          transactionForm.get('purpose').invalid &&
-          transactionForm.get('purpose').touched
-        "
-      >
-        <ion-col sizeSm="6" offsetSm="3">
-          <span>Purpose must contain at least 1 character.</span>
-        </ion-col>
-      </ion-row>
+      <ion-list>
+        <ion-item lines="none">
+          <ion-row>
+            <ion-col sizeSm="6" offsetSm="3">
+              <ion-label>Personal income</ion-label>
+              <ion-checkbox></ion-checkbox>
+            </ion-col>
+            <ion-col sizeSm="6" offsetSm="3">
+              <ion-label>Business income</ion-label>
+              <ion-checkbox></ion-checkbox>
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col sizeSm="6" offsetSm="3">
+              <ion-label>Personal expense</ion-label>
+              <ion-checkbox></ion-checkbox>
+            </ion-col>
+            <ion-col sizeSm="6" offsetSm="3">
+              <ion-label>Business expense</ion-label>
+              <ion-checkbox></ion-checkbox>
+            </ion-col>
+          </ion-row>
+        </ion-item>
+      </ion-list>
 
       <ion-row>
         <ion-col sizeSm="6" offsetSm="3">
           <ion-item>
             <ion-label position="fixed">Date:</ion-label>
-            <ion-input type="date" required [min]="minDate" [max]="maxDate" formControlName="date"></ion-input>
+            <ion-input
+              type="date"
+              required
+              [min]="minDate"
+              [max]="maxDate"
+              formControlName="date"
+            ></ion-input>
           </ion-item>
         </ion-col>
       </ion-row>
