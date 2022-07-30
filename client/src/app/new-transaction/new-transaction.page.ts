@@ -14,7 +14,7 @@ import { switchMap } from 'rxjs/operators';
 import { ItemCategoryService } from '../services/item-category.service';
 import { PurposeService } from '../services/purpose.service';
 import { NewTransactionModalComponent } from './new-transaction-modal/new-transaction-modal.component';
-import { TransactionType } from './transaction.model';
+import { ItemCategory, Purpose, TransactionType } from './transaction.model';
 import { TransactionService } from './transaction.service';
 
 @Component({
@@ -29,8 +29,12 @@ export class NewTransactionPage implements OnInit, OnDestroy {
   monthYear: Date;
   minDate: string;
   maxDate: string;
+  itemCategories: ItemCategory[];
+  purposes: Purpose[];
 
   private transactionSub: Subscription;
+  private itemCategorySub: Subscription;
+  private purposeSub: Subscription;
 
   transactionTypes = Object.values(TransactionType);
   title: string;
@@ -69,8 +73,12 @@ export class NewTransactionPage implements OnInit, OnDestroy {
       }
     );
 
-    this.itemCategoryService.getItemCategories().subscribe(data => console.log(data));
-    this.purposeService.getPurposes().subscribe(data => console.log(data));
+    this.itemCategorySub = this.itemCategoryService.getItemCategories().subscribe(itemCategories => {
+      this.itemCategories = itemCategories;
+    } );
+    this.purposeSub = this.purposeService.getPurposes().subscribe(purposes => {
+      this.purposes = purposes;
+    });
   }
 
   ionViewWillEnter() {
@@ -219,6 +227,14 @@ export class NewTransactionPage implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.transactionSub) {
       this.transactionSub.unsubscribe();
+    }
+
+    if (this.itemCategorySub) {
+      this.itemCategorySub.unsubscribe();
+    }
+
+    if (this.purposeSub) {
+      this.purposeSub.unsubscribe();
     }
   }
 }

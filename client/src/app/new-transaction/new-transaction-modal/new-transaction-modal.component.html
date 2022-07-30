@@ -27,21 +27,41 @@
           <ion-row>
             <ion-col sizeSm="6" offsetSm="3">
               <ion-label>Personal income</ion-label>
-              <ion-checkbox></ion-checkbox>
+              <ion-checkbox
+                #pi
+                [disabled]="!isTypeChosen || !isDeposit"
+                [checked]="isPersonalIncome"
+                (ionChange)="onPersonalIncomeChange(pi)"
+              ></ion-checkbox>
             </ion-col>
             <ion-col sizeSm="6" offsetSm="3">
               <ion-label>Business income</ion-label>
-              <ion-checkbox></ion-checkbox>
+              <ion-checkbox
+                #bi
+                [disabled]="!isTypeChosen || !isDeposit"
+                [checked]="isBusinessIncome"
+                (ionChange)="onBusinessIncomeChange(bi)"
+              ></ion-checkbox>
             </ion-col>
           </ion-row>
           <ion-row>
             <ion-col sizeSm="6" offsetSm="3">
               <ion-label>Personal expense</ion-label>
-              <ion-checkbox></ion-checkbox>
+              <ion-checkbox
+                #pe
+                [disabled]="!isTypeChosen || isDeposit"
+                [checked]="isPersonalExpense"
+                (ionChange)="onPersonalExpenseChange(pe)"
+              ></ion-checkbox>
             </ion-col>
             <ion-col sizeSm="6" offsetSm="3">
               <ion-label>Business expense</ion-label>
-              <ion-checkbox></ion-checkbox>
+              <ion-checkbox
+                #be
+                [disabled]="!isTypeChosen || isDeposit"
+                [checked]="isBusinessExpense"
+                (ionChange)="onBusinessExpenseChange(be)"
+              ></ion-checkbox>
             </ion-col>
           </ion-row>
         </ion-item>

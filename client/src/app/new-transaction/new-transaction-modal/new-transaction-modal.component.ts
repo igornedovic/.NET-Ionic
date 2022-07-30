@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, NgForm } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { IonCheckbox, ModalController } from '@ionic/angular';
+import { TransactionType } from '../transaction.model';
 
 @Component({
   selector: 'app-new-transaction-modal',
@@ -15,10 +16,24 @@ export class NewTransactionModalComponent implements OnInit {
 
   isFetchedImage = false;
   isPopulated = false;
+  isTypeChosen = true;
+  isDeposit = false;
+  isPersonalIncome = false;
+  isBusinessIncome = false;
+  isPersonalExpense = false;
+  isBusinessExpense = false;
 
   constructor(private modalCtrl: ModalController) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (!this.transactionForm.get("type").value) {
+      this.isTypeChosen = false;
+    }
+
+    if (this.transactionForm.get("type").value === TransactionType.Deposit) {
+      this.isDeposit = true;
+    }
+  }
 
   onCancel() {
     this.modalCtrl.dismiss();
@@ -42,4 +57,39 @@ export class NewTransactionModalComponent implements OnInit {
     this.isPopulated = true;
   }
 
+  onPersonalIncomeChange(pi: IonCheckbox) {
+    if (pi.checked === true) {
+      this.isPersonalIncome = true;
+      this.isBusinessIncome = false;
+    } else {
+      this.isPersonalIncome = false;
+    }
+  }
+
+  onBusinessIncomeChange(bi: IonCheckbox) {
+    if (bi.checked === true) {
+      this.isBusinessIncome = true;
+      this.isPersonalIncome = false;
+    } else {
+      this.isBusinessIncome = false;
+    }
+  }
+
+  onPersonalExpenseChange(pe: IonCheckbox) {
+    if (pe.checked === true) {
+      this.isPersonalExpense= true;
+      this.isBusinessExpense= false;
+    } else {
+      this.isPersonalExpense= false;
+    }
+  }
+
+  onBusinessExpenseChange(be: IonCheckbox) {
+    if (be.checked === true) {
+      this.isBusinessExpense = true;
+      this.isPersonalExpense = false;
+    } else {
+      this.isBusinessExpense = false;
+    }
+  }
 }
