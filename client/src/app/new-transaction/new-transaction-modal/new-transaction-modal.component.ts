@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, NgForm } from '@angular/forms';
 import { IonCheckbox, ModalController } from '@ionic/angular';
-import { TransactionType } from '../transaction.model';
+
+import { ItemCategory, Purpose, TransactionType } from '../transaction.model';
 
 @Component({
   selector: 'app-new-transaction-modal',
@@ -13,6 +14,10 @@ export class NewTransactionModalComponent implements OnInit {
   @Input() transactionForm: FormGroup;
   @Input() minDate: string;
   @Input() maxDate: string;
+  @Input() itemCategories: ItemCategory[];
+  @Input() purposes: Purpose[];
+
+  filteredPurposes: Purpose[];
 
   isFetchedImage = false;
   isPopulated = false;
@@ -61,6 +66,8 @@ export class NewTransactionModalComponent implements OnInit {
     if (pi.checked === true) {
       this.isPersonalIncome = true;
       this.isBusinessIncome = false;
+
+      this.filterPurposesByItemCategory(+pi.value);
     } else {
       this.isPersonalIncome = false;
     }
@@ -70,6 +77,8 @@ export class NewTransactionModalComponent implements OnInit {
     if (bi.checked === true) {
       this.isBusinessIncome = true;
       this.isPersonalIncome = false;
+
+      this.filterPurposesByItemCategory(+bi.value);
     } else {
       this.isBusinessIncome = false;
     }
@@ -79,6 +88,8 @@ export class NewTransactionModalComponent implements OnInit {
     if (pe.checked === true) {
       this.isPersonalExpense= true;
       this.isBusinessExpense= false;
+
+      this.filterPurposesByItemCategory(+pe.value);
     } else {
       this.isPersonalExpense= false;
     }
@@ -88,8 +99,14 @@ export class NewTransactionModalComponent implements OnInit {
     if (be.checked === true) {
       this.isBusinessExpense = true;
       this.isPersonalExpense = false;
+
+      this.filterPurposesByItemCategory(+be.value);
     } else {
       this.isBusinessExpense = false;
     }
+  }
+
+  filterPurposesByItemCategory(itemCategoryId: number) {
+    this.filteredPurposes = this.purposes.filter(p => p.itemCategory.itemCategoryId === itemCategoryId);
   }
 }

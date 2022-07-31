@@ -29,6 +29,7 @@
               <ion-label>Personal income</ion-label>
               <ion-checkbox
                 #pi
+                [value]="itemCategories[0].itemCategoryId"
                 [disabled]="!isTypeChosen || !isDeposit"
                 [checked]="isPersonalIncome"
                 (ionChange)="onPersonalIncomeChange(pi)"
@@ -38,6 +39,7 @@
               <ion-label>Business income</ion-label>
               <ion-checkbox
                 #bi
+                [value]="itemCategories[1].itemCategoryId"
                 [disabled]="!isTypeChosen || !isDeposit"
                 [checked]="isBusinessIncome"
                 (ionChange)="onBusinessIncomeChange(bi)"
@@ -49,6 +51,7 @@
               <ion-label>Personal expense</ion-label>
               <ion-checkbox
                 #pe
+                [value]="itemCategories[2].itemCategoryId"
                 [disabled]="!isTypeChosen || isDeposit"
                 [checked]="isPersonalExpense"
                 (ionChange)="onPersonalExpenseChange(pe)"
@@ -58,6 +61,7 @@
               <ion-label>Business expense</ion-label>
               <ion-checkbox
                 #be
+                [value]="itemCategories[3].itemCategoryId"
                 [disabled]="!isTypeChosen || isDeposit"
                 [checked]="isBusinessExpense"
                 (ionChange)="onBusinessExpenseChange(be)"
@@ -66,6 +70,39 @@
           </ion-row>
         </ion-item>
       </ion-list>
+
+      <ion-row>
+        <ion-col sizeSm="6" offsetSm="3">
+          <ion-item>
+            <ion-label position="floating">Purpose:</ion-label>
+            <ion-select
+              interface="popover"
+              name="purposeId"
+              required
+              formControlName="purposeId"
+            >
+              <ion-select-option
+                *ngFor="let purpose of filteredPurposes"
+                [value]="purpose.purposeId"
+              >
+                {{ purpose.name }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngIf="
+          transactionForm.get('purposeId').invalid &&
+          !transactionForm.get('purposeId').touched &&
+          transactionForm.get('purposeId').dirty
+        "
+      >
+        <ion-col size-sm="6" offset-sm="3">
+          <span>Please choose a purpose.</span>
+        </ion-col>
+      </ion-row>
 
       <ion-row>
         <ion-col sizeSm="6" offsetSm="3">

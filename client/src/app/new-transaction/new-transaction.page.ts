@@ -59,7 +59,7 @@ export class NewTransactionPage implements OnInit, OnDestroy {
     this.transactionForm = new FormGroup({
       type: new FormControl('', Validators.required),
       monthYear: new FormControl('', Validators.required),
-      purpose: new FormControl('', Validators.required),
+      purposeId: new FormControl(0, Validators.required),
       date: new FormControl('', Validators.required),
       amount: new FormControl('', [Validators.required, Validators.min(1)]),
       imageUrl: new FormControl('', Validators.required),
@@ -94,7 +94,7 @@ export class NewTransactionPage implements OnInit, OnDestroy {
       this.image = history.state.image;
 
       this.transactionForm.get('type').setValue(this.type);
-      this.transactionForm.get('purpose').setValue(this.purpose);
+      this.transactionForm.get('purposeId').setValue(this.purpose);
       this.transactionForm.get('amount').setValue(this.amount);
       this.transactionForm.get('date').setValue(this.date);
       this.transactionForm.get('imageUrl').setValue(this.image);
@@ -114,6 +114,8 @@ export class NewTransactionPage implements OnInit, OnDestroy {
           transactionForm: this.transactionForm,
           minDate: this.minDate,
           maxDate: this.maxDate,
+          itemCategories: this.itemCategories,
+          purposes: this.purposes
         },
       })
       .then((modal) => {
