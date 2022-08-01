@@ -47,7 +47,7 @@ export class NewTransactionModalComponent implements OnInit {
   onAddItem() {
     this.modalCtrl.dismiss(
       {
-        purpose: this.transactionForm.get('purpose'),
+        purposeId: this.transactionForm.get('purposeId'),
         date: this.transactionForm.get('date'),
         amount: this.transactionForm.get('amount'),
         imageUrl: this.transactionForm.get('imageUrl'),

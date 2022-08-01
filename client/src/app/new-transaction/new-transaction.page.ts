@@ -2,19 +2,22 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormControl,
   FormGroup,
-  NgForm,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoadingController, ModalController } from '@ionic/angular';
+import { IonItemSliding, LoadingController, ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 
 import { ItemCategoryService } from '../services/item-category.service';
 import { PurposeService } from '../services/purpose.service';
 import { NewTransactionModalComponent } from './new-transaction-modal/new-transaction-modal.component';
-import { ItemCategory, Purpose, TransactionType } from './transaction.model';
+import {
+  ItemCategory,
+  Purpose,
+  TransactionItem,
+  TransactionType,
+} from './transaction.model';
 import { TransactionService } from './transaction.service';
 
 @Component({
@@ -31,6 +34,9 @@ export class NewTransactionPage implements OnInit, OnDestroy {
   maxDate: string;
   itemCategories: ItemCategory[];
   purposes: Purpose[];
+  addedTransactionItems: TransactionItem[] = [];
+  transactionItemsCounter = 0;
+  itemPurposeName: string;
 
   private transactionSub: Subscription;
   private itemCategorySub: Subscription;
@@ -52,7 +58,8 @@ export class NewTransactionPage implements OnInit, OnDestroy {
     private router: Router,
     private modalCtrl: ModalController,
     private loadingCtrl: LoadingController,
-    private itemCategoryService: ItemCategoryService, private purposeService: PurposeService
+    private itemCategoryService: ItemCategoryService,
+    private purposeService: PurposeService
   ) {}
 
   ngOnInit() {
@@ -73,12 +80,16 @@ export class NewTransactionPage implements OnInit, OnDestroy {
       }
     );
 
-    this.itemCategorySub = this.itemCategoryService.getItemCategories().subscribe(itemCategories => {
-      this.itemCategories = itemCategories;
-    } );
-    this.purposeSub = this.purposeService.getPurposes().subscribe(purposes => {
-      this.purposes = purposes;
-    });
+    this.itemCategorySub = this.itemCategoryService
+      .getItemCategories()
+      .subscribe((itemCategories) => {
+        this.itemCategories = itemCategories;
+      });
+    this.purposeSub = this.purposeService
+      .getPurposes()
+      .subscribe((purposes) => {
+        this.purposes = purposes;
+      });
   }
 
   ionViewWillEnter() {
@@ -115,7 +126,7 @@ export class NewTransactionPage implements OnInit, OnDestroy {
           minDate: this.minDate,
           maxDate: this.maxDate,
           itemCategories: this.itemCategories,
-          purposes: this.purposes
+          purposes: this.purposes,
         },
       })
       .then((modal) => {
@@ -124,15 +135,25 @@ export class NewTransactionPage implements OnInit, OnDestroy {
       })
       .then((modalData) => {
         if (modalData.role === 'confirm') {
-          this.transactionForm.get('purpose').setValue(modalData.data.purpose.value);
-          this.transactionForm.get('date').setValue(modalData.data.date.value);
-          this.transactionForm.get('amount').setValue(modalData.data.amount.value);
-          this.transactionForm.get('imageUrl').setValue(modalData.data.imageUrl.value);
+          this.addedTransactionItems.push(
+            new TransactionItem(
+              this.transactionItemsCounter + 1,
+              modalData.data.date.value,
+              modalData.data.amount.value,
+              modalData.data.imageUrl.value,
+              new Purpose(modalData.data.purposeId.value)
+            )
+          );
+
+          this.itemPurposeName = this.purposes.find(
+            (p) => p.purposeId === modalData.data.purposeId.value
+          ).name;
+
           this.transactionForm
             .get('totalAmount')
             .setValue(
               this.transactionForm.get('totalAmount').value +
-                this.transactionForm.get('amount').value
+                modalData.data.amount.value
             );
         }
       });
@@ -175,6 +196,10 @@ export class NewTransactionPage implements OnInit, OnDestroy {
       this.monthYear.getMonth(),
       31
     ).toLocaleDateString('en-ca');
+  }
+
+  onCancelItem(transactionItemId: number, slidingElement: IonItemSliding) {
+    slidingElement.close();
   }
 
   onAddTransaction() {

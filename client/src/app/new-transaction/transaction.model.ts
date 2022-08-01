@@ -22,8 +22,8 @@ export class TransactionItem {
 export class Purpose {
   constructor(
     public purposeId: number,
-    public name: string,
-    public itemCategory: ItemCategory
+    public name?: string,
+    public itemCategory?: ItemCategory
   ) {}
 }
 
