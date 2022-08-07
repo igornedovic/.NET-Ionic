@@ -12,7 +12,7 @@ export class Transaction {
 export class TransactionItem {
   constructor(
     public transactionItemId: number | null,
-    public date: Date,
+    public date: Date | string,
     public amount: number,
     public imageUrl: string,
     public purpose: Purpose

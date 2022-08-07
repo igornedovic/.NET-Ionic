@@ -46,51 +46,55 @@ export class TransactionService {
     );
   }
 
-  addTransaction(transactionData: TransactionData, imageUrl: string) {
-    return of(1);
-    // let fetchedUserId: number;
-    // let newTransaction: Transaction;
-    // let generatedId: number;
+  addTransaction(transactionData: TransactionData, addedTransactionItems: TransactionItem[]) {
+    let fetchedUserId: number;
+    let newTransaction: Transaction;
+    let generatedId: number;
 
-    // return this.authService.userId.pipe(
-    //   take(1),
-    //   tap((userId) => {
-    //     fetchedUserId = userId;
-    //   }),
-    //   take(1),
-    //   switchMap(() => {
-    //     newTransaction = new Transaction(
-    //       null,
-    //       transactionData.type,
-    //       transactionData.purpose,
-    //       +transactionData.amount,
-    //       new Date(transactionData.date),
-    //       imageUrl,
-    //       fetchedUserId
-    //     );
+    return this.authService.userId.pipe(
+      take(1),
+      tap((userId) => {
+        fetchedUserId = userId;
+      }),
+      take(1),
+      switchMap(() => {
+        newTransaction = new Transaction(
+          null,
+          transactionData.type,
+          transactionData.monthYear,
+          +transactionData.totalAmount,
+          fetchedUserId,
+          addedTransactionItems
+        )
 
-    //     return this.http.post<TransactionData>(this.apiUrl + 'transaction', {
-    //       purpose: newTransaction.purpose,
-    //       type: newTransaction.type.toString(),
-    //       date: newTransaction.date.toISOString().slice(0, 10),
-    //       amount: newTransaction.amount,
-    //       imageUrl: newTransaction.imageUrl,
-    //       userId: newTransaction.userId,
-    //     });
-    //   }),
-    //   take(1),
-    //   switchMap((response) => {
-    //     generatedId = response.transactionId;
-    //     return this.transactions;
-    //   }),
-    //   take(1),
-    //   tap((transations) => {
-    //     newTransaction.transactionId = generatedId;
-    //     const newTransactions = transations.concat(newTransaction);
-    //     this._transactions.next(newTransactions);
-    //     this.changeBalance(newTransactions);
-    //   })
-    // );
+        return this.http.post<TransactionData>(this.apiUrl + 'transaction', {
+          type: newTransaction.type.toString(),
+          monthYear: newTransaction.monthYear,
+          totalAmount: newTransaction.totalAmount,
+          userId: newTransaction.userId,
+          transactionItems: newTransaction.transactionItems.map(t => {
+            return {
+              date: t.date,
+              amount: t.amount,
+              imageUrl: t.imageUrl,
+              purposeId: t.purpose.purposeId
+            }
+          })
+        });
+      }),
+      take(1),
+      switchMap((response) => {
+        generatedId = response.transactionId;
+        return this.transactions;
+      }),
+      take(1),
+      tap((transations) => {
+        newTransaction.transactionId = generatedId;
+        const newTransactions = transations.concat(newTransaction);
+        this._transactions.next(newTransactions);
+        this.changeBalance(newTransactions);
+      })
+    );
   }
 
   getTransactions() {

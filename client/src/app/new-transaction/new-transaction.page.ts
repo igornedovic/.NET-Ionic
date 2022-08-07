@@ -152,10 +152,10 @@ export class NewTransactionPage implements OnInit, OnDestroy {
           this.addedTransactionItems.push(
             new TransactionItem(
               this.transactionItemCounter,
-              modalData.data.date.value,
-              modalData.data.amount.value,
-              modalData.data.imageUrl,
-              new Purpose(modalData.data.purposeId.value, purposeName)
+              new Date(modalData.data.date.value).toISOString().slice(0, 10),
+              +modalData.data.amount.value,
+              modalData.data.imageUrl.toString(),
+              new Purpose(+modalData.data.purposeId.value, purposeName)
             )
           );
 
@@ -231,29 +231,21 @@ export class NewTransactionPage implements OnInit, OnDestroy {
   }
 
   onAddTransaction() {
-    console.log(this.transactionForm.value);
-    // this.loadingCtrl
-    //   .create({
-    //     message: 'Adding transaction...',
-    //   })
-    //   .then((loadingEl) => {
-    //     loadingEl.present();
-    //     this.transactionService
-    //       .uploadImage(this.transactionForm.get('imageUrl').value)
-    //       .pipe(
-    //         switchMap((uploadRes) => {
-    //           return this.transactionService.addTransaction(
-    //             this.transactionForm.value,
-    //             uploadRes.url
-    //           );
-    //         })
-    //       )
-    //       .subscribe(() => {
-    //         loadingEl.dismiss();
-    //         this.transactionForm.reset();
-    //         this.router.navigate(['/home']);
-    //       });
-    //   });
+    this.loadingCtrl
+      .create({
+        message: 'Adding transaction...',
+      })
+      .then((loadingEl) => {
+        loadingEl.present();
+        this.transactionService
+          .addTransaction(this.transactionForm.value, this.addedTransactionItems)
+          .subscribe(() => {
+            loadingEl.dismiss();
+            this.transactionForm.reset();
+            this.transactionItemCounter = 0;
+            this.router.navigate(['/home']);
+          });
+      });
   }
 
   onUpdateTransaction() {
