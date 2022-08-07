@@ -1,8 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, NgForm } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { IonCheckbox, ModalController } from '@ionic/angular';
 
 import { ItemCategory, Purpose, TransactionType } from '../transaction.model';
+import { TransactionService } from '../transaction.service';
 
 @Component({
   selector: 'app-new-transaction-modal',
@@ -28,14 +29,17 @@ export class NewTransactionModalComponent implements OnInit {
   isPersonalExpense = false;
   isBusinessExpense = false;
 
-  constructor(private modalCtrl: ModalController) { }
+  constructor(
+    private modalCtrl: ModalController,
+    private transactionService: TransactionService
+  ) {}
 
   ngOnInit() {
-    if (!this.transactionForm.get("type").value) {
+    if (!this.transactionForm.get('type').value) {
       this.isTypeChosen = false;
     }
 
-    if (this.transactionForm.get("type").value === TransactionType.Deposit) {
+    if (this.transactionForm.get('type').value === TransactionType.Deposit) {
       this.isDeposit = true;
     }
   }
@@ -45,19 +49,28 @@ export class NewTransactionModalComponent implements OnInit {
   }
 
   onAddItem() {
-    this.modalCtrl.dismiss(
-      {
-        purposeId: this.transactionForm.get('purposeId'),
-        date: this.transactionForm.get('date'),
-        amount: this.transactionForm.get('amount'),
-        imageUrl: this.transactionForm.get('imageUrl'),
-      },
-      'confirm'
-    );
+    let uploadImageUrl: string;
+
+
+    this.transactionService
+      .uploadImage(this.transactionForm.get('transactionItems').get('imageUrl').value)
+      .subscribe((uploadRes) => {
+        uploadImageUrl = uploadRes.url;
+
+        this.modalCtrl.dismiss(
+          {
+            purposeId: this.transactionForm.get('transactionItems').get('purposeId'),
+            date: this.transactionForm.get('transactionItems').get('date'),
+            amount: this.transactionForm.get('transactionItems').get('amount'),
+            imageUrl: uploadImageUrl,
+          },
+          'confirm'
+        );
+      });
   }
 
   onImageImported(imageData: string | File) {
-    this.transactionForm.patchValue({ imageUrl: imageData });
+    this.transactionForm.get('transactionItems').patchValue({ imageUrl: imageData });
     this.isFetchedImage = false;
     this.isPopulated = true;
   }
@@ -86,12 +99,12 @@ export class NewTransactionModalComponent implements OnInit {
 
   onPersonalExpenseChange(pe: IonCheckbox) {
     if (pe.checked === true) {
-      this.isPersonalExpense= true;
-      this.isBusinessExpense= false;
+      this.isPersonalExpense = true;
+      this.isBusinessExpense = false;
 
       this.filterPurposesByItemCategory(+pe.value);
     } else {
-      this.isPersonalExpense= false;
+      this.isPersonalExpense = false;
     }
   }
 
@@ -107,6 +120,8 @@ export class NewTransactionModalComponent implements OnInit {
   }
 
   filterPurposesByItemCategory(itemCategoryId: number) {
-    this.filteredPurposes = this.purposes.filter(p => p.itemCategory.itemCategoryId === itemCategoryId);
+    this.filteredPurposes = this.purposes.filter(
+      (p) => p.itemCategory.itemCategoryId === itemCategoryId
+    );
   }
 }

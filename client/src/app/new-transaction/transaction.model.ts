@@ -1,6 +1,6 @@
 export class Transaction {
   constructor(
-    public transactionId: number,
+    public transactionId: number | null,
     public type: TransactionType,
     public monthYear: string,
     public totalAmount: number,
@@ -11,7 +11,7 @@ export class Transaction {
 
 export class TransactionItem {
   constructor(
-    public transactionItemId: number,
+    public transactionItemId: number | null,
     public date: Date,
     public amount: number,
     public imageUrl: string,

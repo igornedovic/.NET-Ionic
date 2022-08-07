@@ -1,12 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
+  FormArray,
   FormControl,
   FormGroup,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonItemSliding, LoadingController, ModalController } from '@ionic/angular';
+import {
+  IonItemSliding,
+  LoadingController,
+  ModalController,
+} from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
 import { ItemCategoryService } from '../services/item-category.service';
@@ -35,8 +40,7 @@ export class NewTransactionPage implements OnInit, OnDestroy {
   itemCategories: ItemCategory[];
   purposes: Purpose[];
   addedTransactionItems: TransactionItem[] = [];
-  transactionItemsCounter = 0;
-  itemPurposeName: string;
+  transactionItemCounter = 0;
 
   private transactionSub: Subscription;
   private itemCategorySub: Subscription;
@@ -66,10 +70,12 @@ export class NewTransactionPage implements OnInit, OnDestroy {
     this.transactionForm = new FormGroup({
       type: new FormControl('', Validators.required),
       monthYear: new FormControl('', Validators.required),
-      purposeId: new FormControl(0, Validators.required),
-      date: new FormControl('', Validators.required),
-      amount: new FormControl('', [Validators.required, Validators.min(1)]),
-      imageUrl: new FormControl('', Validators.required),
+      transactionItems: new FormGroup({
+        purposeId: new FormControl(0, Validators.required),
+        date: new FormControl('', Validators.required),
+        amount: new FormControl('', [Validators.required, Validators.min(1)]),
+        imageUrl: new FormControl('', Validators.required),
+      }),
       totalAmount: new FormControl(0, [Validators.required, Validators.min(1)]),
     });
 
@@ -104,19 +110,21 @@ export class NewTransactionPage implements OnInit, OnDestroy {
       this.date = history.state.date;
       this.image = history.state.image;
 
-      this.transactionForm.get('type').setValue(this.type);
-      this.transactionForm.get('purposeId').setValue(this.purpose);
-      this.transactionForm.get('amount').setValue(this.amount);
-      this.transactionForm.get('date').setValue(this.date);
-      this.transactionForm.get('imageUrl').setValue(this.image);
+      // this.transactionForm.get('type').setValue(this.type);
+      // this.transactionForm.get('purposeId').setValue(this.purpose);
+      // this.transactionForm.get('amount').setValue(this.amount);
+      // this.transactionForm.get('date').setValue(this.date);
+      // this.transactionForm.get('imageUrl').setValue(this.image);
 
-      if (this.transactionForm.get('imageUrl').value) {
+      if (this.transactionForm.get('transactionItems').get('imageUrl').value) {
         this.isFetchedImage = true;
       }
     }
   }
 
   openModal() {
+    this.transactionForm.get('transactionItems').reset();
+
     this.modalCtrl
       .create({
         component: NewTransactionModalComponent,
@@ -135,19 +143,21 @@ export class NewTransactionPage implements OnInit, OnDestroy {
       })
       .then((modalData) => {
         if (modalData.role === 'confirm') {
-          this.addedTransactionItems.push(
-            new TransactionItem(
-              this.transactionItemsCounter + 1,
-              modalData.data.date.value,
-              modalData.data.amount.value,
-              modalData.data.imageUrl.value,
-              new Purpose(modalData.data.purposeId.value)
-            )
-          );
-
-          this.itemPurposeName = this.purposes.find(
+          const purposeName = this.purposes.find(
             (p) => p.purposeId === modalData.data.purposeId.value
           ).name;
+
+          this.transactionItemCounter += 1;
+
+          this.addedTransactionItems.push(
+            new TransactionItem(
+              this.transactionItemCounter,
+              modalData.data.date.value,
+              modalData.data.amount.value,
+              modalData.data.imageUrl,
+              new Purpose(modalData.data.purposeId.value, purposeName)
+            )
+          );
 
           this.transactionForm
             .get('totalAmount')
@@ -200,6 +210,24 @@ export class NewTransactionPage implements OnInit, OnDestroy {
 
   onCancelItem(transactionItemId: number, slidingElement: IonItemSliding) {
     slidingElement.close();
+
+    this.transactionForm
+    .get('totalAmount')
+    .setValue(
+      this.transactionForm.get('totalAmount').value -
+        this.addedTransactionItems.find(ti => ti.transactionItemId === transactionItemId).amount
+    );
+
+    console.log(this.addedTransactionItems);
+    this.addedTransactionItems = this.addedTransactionItems.filter(
+      (ti) => ti.transactionItemId !== transactionItemId
+    );
+
+    for (let i = 0; i < this.addedTransactionItems.length; i++) {
+      this.addedTransactionItems[i].transactionItemId = i + 1;
+    }
+
+    console.log(this.addedTransactionItems);
   }
 
   onAddTransaction() {

@@ -80,8 +80,10 @@
           sizeSm="6"
           offsetSm="3"
           *ngIf="!addedTransactionItems || addedTransactionItems.length <= 0"
+          class="ion-text-center"
+          style="color: var(--ion-color-danger)"
         >
-          <p>No items added</p>
+          <p>No items added!</p>
         </ion-col>
 
         <ion-col
@@ -99,8 +101,8 @@
                   <ion-img [src]="item.imageUrl"></ion-img>
                 </ion-avatar>
                 <ion-label>
-                  <h6>Purpose: {{itemPurposeName}}</h6>
-                  <p>Date: {{item.date}}</p>
+                  <h6>Purpose: {{item.purpose.name}}</h6>
+                  <p>Date: {{item.date | date: 'MM/dd/yyyy'}}</p>
                   <p>Amount: {{item.amount}}</p>
                 </ion-label>
               </ion-item>
@@ -135,9 +137,9 @@
           <span *ngIf="transactionForm.get('totalAmount').hasError('required')"
             >Total amount must contain at least 1 digit.</span
           >
-          <span *ngIf="transactionForm.get('totalAmount').hasError('min')"
+          <!-- <span *ngIf="transactionForm.get('totalAmount').hasError('min')"
             >Total amount must be greater than 0.</span
-          >
+          > -->
           <span
             *ngIf="transactionForm.get('totalAmount').hasError('max') && transactionForm.get('type').value == transactionTypes[1]"
             >Your current balance ({{balance}} RSD) is less than withdrawal
