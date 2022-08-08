@@ -72,12 +72,12 @@ export class TransactionService {
           monthYear: newTransaction.monthYear,
           totalAmount: newTransaction.totalAmount,
           userId: newTransaction.userId,
-          transactionItems: newTransaction.transactionItems.map(t => {
+          transactionItems: newTransaction.transactionItems.map(ti => {
             return {
-              date: t.date,
-              amount: t.amount,
-              imageUrl: t.imageUrl,
-              purposeId: t.purpose.purposeId
+              date: ti.date,
+              amount: ti.amount,
+              imageUrl: ti.imageUrl,
+              purposeId: ti.purpose.purposeId
             }
           })
         });
@@ -205,53 +205,56 @@ export class TransactionService {
     );
   }
 
-  updateTransaction(id: number, transactionData: TransactionData) {
-    // let updatedTransactions: Transaction[];
-    // return this.transactions.pipe(
-    //   take(1),
-    //   switchMap((transactions) => {
-    //     if (!transactions || transactions.length <= 0) {
-    //       return this.getTransactions();
-    //     } else {
-    //       return of(transactions);
-    //     }
-    //   }),
-    //   switchMap((transactions) => {
-    //     const updatedTransactionIndex = transactions.findIndex(
-    //       (pl) => pl.transactionId === id
-    //     );
-    //     updatedTransactions = [...transactions];
-    //     const oldTransaction = updatedTransactions[updatedTransactionIndex];
-    //     updatedTransactions[updatedTransactionIndex] = new Transaction(
-    //       id,
-    //       transactionData.type,
-    //       transactionData.purpose,
-    //       +transactionData.amount,
-    //       new Date(transactionData.date),
-    //       transactionData.imageUrl,
-    //       oldTransaction.userId
-    //     );
-    //     return this.http.put(
-    //       this.apiUrl + `transaction/${id}`,
-    //       {
-    //         purpose: updatedTransactions[updatedTransactionIndex].purpose,
-    //         type: updatedTransactions[updatedTransactionIndex].type.toString(),
-    //         date: updatedTransactions[updatedTransactionIndex].date
-    //           .toISOString()
-    //           .slice(0, 10),
-    //         amount: updatedTransactions[updatedTransactionIndex].amount,
-    //         imageUrl: updatedTransactions[updatedTransactionIndex].imageUrl,
-    //         userId: updatedTransactions[updatedTransactionIndex].userId,
-    //       },
-    //       { responseType: 'text' }
-    //     );
-    //   }),
-    //   tap((response) => {
-    //     this._transactions.next(updatedTransactions);
-    //     this.changeBalance(updatedTransactions);
-    //     return response;
-    //   })
-    // );
+  updateTransaction(id: number, transactionData: TransactionData, addedTransactionItems: TransactionItem[]) {
+    let updatedTransactions: Transaction[];
+    return this.transactions.pipe(
+      take(1),
+      switchMap((transactions) => {
+        if (!transactions || transactions.length <= 0) {
+          return this.getTransactions();
+        } else {
+          return of(transactions);
+        }
+      }),
+      switchMap((transactions) => {
+        const updatedTransactionIndex = transactions.findIndex(
+          (pl) => pl.transactionId === id
+        );
+        updatedTransactions = [...transactions];
+        const oldTransaction = updatedTransactions[updatedTransactionIndex];
+        updatedTransactions[updatedTransactionIndex] = new Transaction(
+          id,
+          transactionData.type,
+          transactionData.monthYear,
+          +transactionData.totalAmount,
+          oldTransaction.userId,
+          addedTransactionItems
+        );
+        return this.http.put(
+          this.apiUrl + `transaction/${id}`,
+          {
+            type: updatedTransactions[updatedTransactionIndex].type.toString(),
+            monthYear: updatedTransactions[updatedTransactionIndex].monthYear,
+            totalAmount: updatedTransactions[updatedTransactionIndex].totalAmount,
+            userId: updatedTransactions[updatedTransactionIndex].userId,
+            transactionItems: updatedTransactions[updatedTransactionIndex].transactionItems.map(ti => {
+              return {
+                date: ti.date,
+                amount: ti.amount,
+                imageUrl: ti.imageUrl,
+                purposeId: ti.purpose.purposeId
+              }
+            })
+          },
+          { responseType: 'text' }
+        );
+      }),
+      tap((response) => {
+        this._transactions.next(updatedTransactions);
+        this.changeBalance(updatedTransactions);
+        return response;
+      })
+    );
   }
 
   deleteTransaction(id: number) {

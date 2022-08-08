@@ -1,6 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
-  FormArray,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import {
   FormControl,
   FormGroup,
   ValidatorFn,
@@ -31,6 +36,7 @@ import { TransactionService } from './transaction.service';
   styleUrls: ['./new-transaction.page.scss'],
 })
 export class NewTransactionPage implements OnInit, OnDestroy {
+  @ViewChild('monthYearRef', { read: ElementRef }) monthYearRef: ElementRef;
   transactionForm: FormGroup;
   balance: number;
   isFetchedImage = false;
@@ -48,12 +54,11 @@ export class NewTransactionPage implements OnInit, OnDestroy {
 
   transactionTypes = Object.values(TransactionType);
   title: string;
-  transactionId: number;
-  type: string;
-  purpose: string;
-  amount: number;
-  date: string;
-  image: string | File;
+  transactionIdEdit: number;
+  typeEdit: string;
+  monthYearEdit: string;
+  totalAmountEdit: number;
+  transactionItemsEdit: TransactionItem[];
 
   maxValidator: ValidatorFn; // stored on class level because of reference comparison
 
@@ -101,20 +106,18 @@ export class NewTransactionPage implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.transactionForm.get('totalAmount').setValue(0);
 
-    if (history.state) {
+    if (history.state.id) {
       this.title = history.state.title;
-      this.transactionId = history.state.id;
-      this.type = history.state.type;
-      this.purpose = history.state.purpose;
-      this.amount = history.state.amount;
-      this.date = history.state.date;
-      this.image = history.state.image;
+      this.transactionIdEdit = history.state.id;
+      this.typeEdit = history.state.type;
+      this.monthYearEdit = history.state.monthYear;
+      this.totalAmountEdit = history.state.totalAmount;
+      this.transactionItemsEdit = history.state.transactionItems;
 
-      // this.transactionForm.get('type').setValue(this.type);
-      // this.transactionForm.get('purposeId').setValue(this.purpose);
-      // this.transactionForm.get('amount').setValue(this.amount);
-      // this.transactionForm.get('date').setValue(this.date);
-      // this.transactionForm.get('imageUrl').setValue(this.image);
+      this.transactionForm.get('type').setValue(this.typeEdit);
+      this.transactionForm.get('monthYear').setValue(this.monthYearEdit);
+      this.transactionForm.get('totalAmount').setValue(this.totalAmountEdit);
+      this.addedTransactionItems = this.transactionItemsEdit;
 
       if (this.transactionForm.get('transactionItems').get('imageUrl').value) {
         this.isFetchedImage = true;
@@ -212,13 +215,14 @@ export class NewTransactionPage implements OnInit, OnDestroy {
     slidingElement.close();
 
     this.transactionForm
-    .get('totalAmount')
-    .setValue(
-      this.transactionForm.get('totalAmount').value -
-        this.addedTransactionItems.find(ti => ti.transactionItemId === transactionItemId).amount
-    );
+      .get('totalAmount')
+      .setValue(
+        this.transactionForm.get('totalAmount').value -
+          this.addedTransactionItems.find(
+            (ti) => ti.transactionItemId === transactionItemId
+          ).amount
+      );
 
-    console.log(this.addedTransactionItems);
     this.addedTransactionItems = this.addedTransactionItems.filter(
       (ti) => ti.transactionItemId !== transactionItemId
     );
@@ -226,8 +230,6 @@ export class NewTransactionPage implements OnInit, OnDestroy {
     for (let i = 0; i < this.addedTransactionItems.length; i++) {
       this.addedTransactionItems[i].transactionItemId = i + 1;
     }
-
-    console.log(this.addedTransactionItems);
   }
 
   onAddTransaction() {
@@ -238,7 +240,10 @@ export class NewTransactionPage implements OnInit, OnDestroy {
       .then((loadingEl) => {
         loadingEl.present();
         this.transactionService
-          .addTransaction(this.transactionForm.value, this.addedTransactionItems)
+          .addTransaction(
+            this.transactionForm.value,
+            this.addedTransactionItems
+          )
           .subscribe(() => {
             loadingEl.dismiss();
             this.transactionForm.reset();
@@ -249,21 +254,21 @@ export class NewTransactionPage implements OnInit, OnDestroy {
   }
 
   onUpdateTransaction() {
-    // this.loadingCtrl
-    //   .create({
-    //     message: 'Updating transaction...',
-    //   })
-    //   .then((loadingEl) => {
-    //     loadingEl.present();
-    //     this.transactionService
-    //       .updateTransaction(this.transactionId, this.transactionForm.value)
-    //       .subscribe((response) => {
-    //         console.log(response);
-    //         loadingEl.dismiss();
-    //         this.transactionForm.reset();
-    //         this.router.navigate(['/home']);
-    //       });
-    //   });
+    this.loadingCtrl
+      .create({
+        message: 'Updating transaction...',
+      })
+      .then((loadingEl) => {
+        loadingEl.present();
+        this.transactionService
+          .updateTransaction(this.transactionIdEdit, this.transactionForm.value, this.addedTransactionItems)
+          .subscribe((response) => {
+            console.log(response);
+            loadingEl.dismiss();
+            this.transactionForm.reset();
+            this.router.navigate(['/home']);
+          });
+      });
   }
 
   onImageImported(imageData: string | File) {

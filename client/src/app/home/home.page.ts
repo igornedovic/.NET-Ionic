@@ -46,17 +46,16 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   onUpdateTransaction(transaction: Transaction) {
-    // this.nav.navigateForward('/new-transaction', {
-    //   state: {
-    //     title: 'Edit transaction',
-    //     id: transaction.transactionId,
-    //     type: transaction.type,
-    //     purpose: transaction.purpose,
-    //     amount: transaction.amount,
-    //     date: transaction.date.toISOString().slice(0, 10),
-    //     image: transaction.imageUrl,
-    //   },
-    // });
+    this.nav.navigateForward('/new-transaction', {
+      state: {
+        title: 'Edit transaction',
+        id: transaction.transactionId,
+        type: transaction.type,
+        monthYear: transaction.monthYear,
+        totalAmount: transaction.totalAmount,
+        transactionItems: transaction.transactionItems
+      },
+    });
   }
 
   onDeleteTransaction(transactionId: number) {
