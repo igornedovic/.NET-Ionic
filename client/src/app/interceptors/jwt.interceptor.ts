@@ -7,6 +7,7 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 import { AuthService } from '../auth/auth.service';
 import { User } from '../auth/user.model';
@@ -19,7 +20,7 @@ export class JwtInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if (!request.url.includes('localhost')) return next.handle(request);
+    if (!request.url.includes(environment.apiUrl)) return next.handle(request);
 
     let currentUser: User | undefined;
 
