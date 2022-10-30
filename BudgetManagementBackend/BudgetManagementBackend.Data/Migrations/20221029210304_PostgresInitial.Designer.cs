@@ -3,60 +3,81 @@ using System;
 using BudgetManagementBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BudgetManagementBackend.Data.Migrations
 {
     [DbContext(typeof(BudgetDbContext))]
-    [Migration("20220717145414_NewModelsAddedAndCurrentModelsUpdated")]
-    partial class NewModelsAddedAndCurrentModelsUpdated
+    [Migration("20221029210304_PostgresInitial")]
+    partial class PostgresInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.9")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("BudgetManagementBackend.Data.Models.ItemCategory", b =>
                 {
                     b.Property<int>("ItemCategoryId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("ItemCategoryId");
 
                     b.ToTable("ItemCategories");
                 });
 
+            modelBuilder.Entity("BudgetManagementBackend.Data.Models.Purpose", b =>
+                {
+                    b.Property<int>("PurposeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("ItemCategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("PurposeId");
+
+                    b.HasIndex("ItemCategoryId");
+
+                    b.ToTable("Purposes");
+                });
+
             modelBuilder.Entity("BudgetManagementBackend.Data.Models.Transaction", b =>
                 {
                     b.Property<int>("TransactionId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("MonthYear")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<double>("TotalAmount")
-                        .HasColumnType("float");
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("TransactionId");
 
@@ -69,66 +90,49 @@ namespace BudgetManagementBackend.Data.Migrations
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<byte[]>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("bytea");
 
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("BudgetManagementBackend.Data.Models.ItemCategory", b =>
+            modelBuilder.Entity("BudgetManagementBackend.Data.Models.Purpose", b =>
                 {
-                    b.OwnsMany("BudgetManagementBackend.Data.Models.Purpose", "Purposes", b1 =>
-                        {
-                            b1.Property<int>("ItemCategoryId")
-                                .HasColumnType("int");
+                    b.HasOne("BudgetManagementBackend.Data.Models.ItemCategory", "ItemCategory")
+                        .WithMany()
+                        .HasForeignKey("ItemCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                            b1.Property<int>("PurposeId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int")
-                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                            b1.Property<string>("Name")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("ItemCategoryId", "PurposeId");
-
-                            b1.ToTable("Purposes");
-
-                            b1.WithOwner("ItemCategory")
-                                .HasForeignKey("ItemCategoryId");
-
-                            b1.Navigation("ItemCategory");
-                        });
-
-                    b.Navigation("Purposes");
+                    b.Navigation("ItemCategory");
                 });
 
             modelBuilder.Entity("BudgetManagementBackend.Data.Models.Transaction", b =>
@@ -142,38 +146,41 @@ namespace BudgetManagementBackend.Data.Migrations
                     b.OwnsMany("BudgetManagementBackend.Data.Models.TransactionItem", "TransactionItems", b1 =>
                         {
                             b1.Property<int>("TransactionId")
-                                .HasColumnType("int");
+                                .HasColumnType("integer");
 
                             b1.Property<int>("TransactionItemId")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int")
-                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                                .HasColumnType("integer")
+                                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                             b1.Property<double>("Amount")
-                                .HasColumnType("float");
+                                .HasColumnType("double precision");
 
                             b1.Property<DateTime>("Date")
-                                .HasColumnType("datetime2");
+                                .HasColumnType("timestamp without time zone");
 
-                            b1.Property<int>("ItemCategoryId")
-                                .HasColumnType("int");
+                            b1.Property<string>("ImageUrl")
+                                .HasColumnType("text");
+
+                            b1.Property<int>("PurposeId")
+                                .HasColumnType("integer");
 
                             b1.HasKey("TransactionId", "TransactionItemId");
 
-                            b1.HasIndex("ItemCategoryId");
+                            b1.HasIndex("PurposeId");
 
                             b1.ToTable("TransactionItems");
 
-                            b1.HasOne("BudgetManagementBackend.Data.Models.ItemCategory", "ItemCategory")
+                            b1.HasOne("BudgetManagementBackend.Data.Models.Purpose", "Purpose")
                                 .WithMany()
-                                .HasForeignKey("ItemCategoryId")
+                                .HasForeignKey("PurposeId")
                                 .OnDelete(DeleteBehavior.Restrict)
                                 .IsRequired();
 
                             b1.WithOwner("Transaction")
                                 .HasForeignKey("TransactionId");
 
-                            b1.Navigation("ItemCategory");
+                            b1.Navigation("Purpose");
 
                             b1.Navigation("Transaction");
                         });
