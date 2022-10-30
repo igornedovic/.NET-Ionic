@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BudgetManagementBackend.Data.Migrations
 {
     [DbContext(typeof(BudgetDbContext))]
-    [Migration("20221029210304_PostgresInitial")]
+    [Migration("20221030120911_PostgresInitial")]
     partial class PostgresInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

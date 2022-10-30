@@ -17,10 +17,10 @@ namespace BudgetManagementBackend.API
         public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            // var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            if (env == "Production")
-            {
+            // if (env == "Production")
+            // {
                 using var scope = host.Services.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<BudgetDbContext>();
 
@@ -34,7 +34,7 @@ namespace BudgetManagementBackend.API
                     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "An error occurred during migration process!");
                 }
-            }
+            // }
 
             await host.RunAsync();
         }
