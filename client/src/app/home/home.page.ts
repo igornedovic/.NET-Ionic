@@ -6,7 +6,10 @@ import {
 } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
-import { Transaction } from '../new-transaction/transaction.model';
+import {
+  Transaction,
+  TransactionItem,
+} from '../new-transaction/transaction.model';
 import { TransactionService } from '../new-transaction/transaction.service';
 
 @Component({
@@ -53,7 +56,9 @@ export class HomePage implements OnInit, OnDestroy {
         type: transaction.type,
         monthYear: transaction.monthYear,
         totalAmount: transaction.totalAmount,
-        transactionItems: transaction.transactionItems
+        transactionItems: transaction.transactionItems.map(ti => {
+          return {...ti, date: new Date(ti.date).toISOString().slice(0, 10)}
+        })
       },
     });
   }
