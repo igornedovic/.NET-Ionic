@@ -17,24 +17,21 @@ namespace BudgetManagementBackend.API
         public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            if (env == "Production")
+            using var scope = host.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<BudgetDbContext>();
+
+            try
             {
-                using var scope = host.Services.CreateScope();
-                var context = scope.ServiceProvider.GetRequiredService<BudgetDbContext>();
-
-                try
-                {
-                    await context.Database.MigrateAsync();
-                    DbInitializer.Initialize(context);
-                }
-                catch (Exception ex)
-                {
-                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred during migration process!");
-                }
+                await context.Database.MigrateAsync();
+                DbInitializer.Initialize(context);
             }
+            catch (Exception ex)
+            {
+                var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred during migration process!");
+            }
+
 
             await host.RunAsync();
         }
