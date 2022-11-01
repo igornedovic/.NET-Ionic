@@ -116,7 +116,9 @@ export class NewTransactionPage implements OnInit, OnDestroy {
 
       this.transactionForm.get('type').setValue(this.typeEdit);
       this.transactionForm.get('monthYear').setValue(this.monthYearEdit);
-      this.transactionForm.get('totalAmount').setValue(this.totalAmountEdit.toFixed(2));
+      this.transactionForm
+        .get('totalAmount')
+        .setValue(this.totalAmountEdit.toFixed(2));
       this.addedTransactionItems = this.transactionItemsEdit;
 
       if (this.transactionForm.get('transactionItems').get('imageUrl').value) {
@@ -165,8 +167,8 @@ export class NewTransactionPage implements OnInit, OnDestroy {
           this.transactionForm
             .get('totalAmount')
             .setValue(
-              this.transactionForm.get('totalAmount').value +
-                modalData.data.amount.value
+              +this.transactionForm.get('totalAmount').value +
+                +modalData.data.amount.value
             );
         }
       });
@@ -262,7 +264,11 @@ export class NewTransactionPage implements OnInit, OnDestroy {
       .then((loadingEl) => {
         loadingEl.present();
         this.transactionService
-          .updateTransaction(this.transactionIdEdit, this.transactionForm.value, this.addedTransactionItems)
+          .updateTransaction(
+            this.transactionIdEdit,
+            this.transactionForm.value,
+            this.addedTransactionItems
+          )
           .subscribe((response) => {
             console.log(response);
             loadingEl.dismiss();
