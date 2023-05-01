@@ -107,8 +107,8 @@ export class TransactionService {
       }),
       take(1),
       switchMap(() => {
-        return this.http.get<TransactionData[]>(
-          this.apiUrl + `user/${fetchedUserId}/transactions`
+        return this.http.post<TransactionData[]>(
+          this.apiUrl + `user/${fetchedUserId}/transactions`, {}
         );
       }),
       map((transactionsResponse) => {
@@ -146,8 +146,8 @@ export class TransactionService {
       }),
       take(1),
       switchMap(() => {
-        return this.http.get<TransactionData>(
-          this.apiUrl + `user/${fetchedUserId}/transactions/${id}`
+        return this.http.post<TransactionData>(
+          this.apiUrl + `user/${fetchedUserId}/transactions/${id}`, {}
         );
       }),
       map((transactionsResponse) => {
@@ -178,9 +178,9 @@ export class TransactionService {
       }),
       take(1),
       switchMap(() => {
-        return this.http.get<TransactionData[]>(
+        return this.http.post<TransactionData[]>(
           this.apiUrl +
-            `user/${fetchedUserId}/transactionItemsToFilter?fromDate=${fromDate}&toDate=${toDate}&minAmount=${minAmount}&maxAmount=${maxAmount}`
+            `user/${fetchedUserId}/transactionItemsToFilter?fromDate=${fromDate}&toDate=${toDate}&minAmount=${minAmount}&maxAmount=${maxAmount}`, {}
         );
       }),
       map(transactionResponse => {

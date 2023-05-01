@@ -1,4 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-image-input',
@@ -12,11 +15,15 @@ export class ImageInputComponent implements OnInit, OnChanges {
   @Input() fetchedImage: string;
   @Input() showPreview = false;
   selectedImage: string;
-  usePicker = true;
+  usePicker = false;
 
-  constructor() { }
+  constructor(private platform: Platform) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if ((this.platform.is('mobile') && !this.platform.is('hybrid')) || this.platform.is('desktop')) {
+      this.usePicker = true;
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.isFetchedImage) {
@@ -25,7 +32,26 @@ export class ImageInputComponent implements OnInit, OnChanges {
   }
 
   onPickImage() {
-    this.filePickerRef.nativeElement.click();
+    if (!Capacitor.isPluginAvailable('Camera')) {
+      this.filePickerRef.nativeElement.click();
+      return;
+    }
+    
+    Camera.getPhoto({
+      quality: 50,
+      source: CameraSource.Prompt,
+      correctOrientation: true,
+      width: 600,
+      resultType: CameraResultType.DataUrl
+    }).then(image => {
+      this.selectedImage = image.dataUrl;
+      this.imagePick.emit(image.dataUrl);
+    }).catch(error => {
+      console.log(error);
+      if (this.usePicker) {
+        this.filePickerRef.nativeElement.click();
+      }
+    });
   }
 
   onFileChosen(event: Event) {

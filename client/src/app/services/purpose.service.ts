@@ -20,8 +20,8 @@ export class PurposeService {
   constructor(private http: HttpClient) { }
 
   getPurposes() {
-    return this.http.get<PurposeData[]>(
-      this.apiUrl + 'purpose'
+    return this.http.post<PurposeData[]>(
+      this.apiUrl + 'purpose', {}
     ).pipe(
       map(response => {
         const purposes: Purpose[] = [];

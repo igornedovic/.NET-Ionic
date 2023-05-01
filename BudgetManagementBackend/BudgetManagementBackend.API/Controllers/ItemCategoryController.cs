@@ -19,7 +19,7 @@ namespace BudgetManagementBackend.API.Controllers
         }
 
         // GET api/itemCategory
-        [HttpGet]
+        [HttpPost]
         public ActionResult<List<ItemCategoryDto>> GetAllItemCategories()
         {
             var itemCategories = _itemCategoryService.GetAllItemCategories();

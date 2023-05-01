@@ -1,4 +1,5 @@
 using BudgetManagementBackend.API.Helpers;
+using BudgetManagementBackend.API.Middlewares;
 using BudgetManagementBackend.Data;
 using BudgetManagementBackend.Data.Interfaces;
 using BudgetManagementBackend.Services.Services;
@@ -38,17 +39,18 @@ namespace BudgetManagementBackend.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); ;
-
             services.AddCors(options =>
             {
                 options.AddPolicy(cors,
                 builder =>
                 {
-                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                    builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
                 });
             });
+
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddDbContext<BudgetDbContext>(options =>
             {
@@ -86,6 +88,8 @@ namespace BudgetManagementBackend.API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseOptions();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

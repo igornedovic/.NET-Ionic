@@ -19,8 +19,8 @@ export class ItemCategoryService {
   constructor(private http: HttpClient) { }
 
   getItemCategories() {
-    return this.http.get<ItemCategoryData[]>(
-      this.apiUrl + 'itemCategory'
+    return this.http.post<ItemCategoryData[]>(
+      this.apiUrl + 'itemCategory', {}
     ).pipe(
       map(response => {
         const itemCategories: ItemCategory[] = [];

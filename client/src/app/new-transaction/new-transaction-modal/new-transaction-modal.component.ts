@@ -51,15 +51,18 @@ export class NewTransactionModalComponent implements OnInit {
   onAddItem() {
     let uploadImageUrl: string;
 
-
     this.transactionService
-      .uploadImage(this.transactionForm.get('transactionItems').get('imageUrl').value)
+      .uploadImage(
+        this.transactionForm.get('transactionItems').get('imageUrl').value
+      )
       .subscribe((uploadRes) => {
         uploadImageUrl = uploadRes.url;
 
         this.modalCtrl.dismiss(
           {
-            purposeId: this.transactionForm.get('transactionItems').get('purposeId'),
+            purposeId: this.transactionForm
+              .get('transactionItems')
+              .get('purposeId'),
             date: this.transactionForm.get('transactionItems').get('date'),
             amount: this.transactionForm.get('transactionItems').get('amount'),
             imageUrl: uploadImageUrl,
@@ -70,7 +73,26 @@ export class NewTransactionModalComponent implements OnInit {
   }
 
   onImageImported(imageData: string | File) {
-    this.transactionForm.get('transactionItems').patchValue({ imageUrl: imageData });
+    let imageFile;
+    if (typeof imageData === 'string') {
+      try {
+        // const blobUrl = URL.createObjectURL(new Blob([imageData.replace('data:image/jpeg;base64,', '')], {type: 'text/plain'}));
+        imageFile = new File(
+          [new Blob([imageData.includes('jpeg') ? imageData.replace('data:image/png;base64,', '') : imageData.replace('data:image/jpeg;base64,', '')])],
+          'camera.jpg',
+          { type: 'image/jpg', lastModified: new Date().getTime() }
+        );
+      } catch (error) {
+        console.log(error);
+        return;
+      }
+    } else {
+      imageFile = imageData;
+    }
+
+    this.transactionForm
+      .get('transactionItems')
+      .patchValue({ imageUrl: imageFile });
     this.isFetchedImage = false;
     this.isPopulated = true;
   }

@@ -19,8 +19,8 @@ namespace BudgetManagementBackend.API.Controllers
         }
 
         // GET api/purpose
-        [HttpGet]
-        public ActionResult<List<PurposeDto>> GetAllItemCategories()
+        [HttpPost]
+        public ActionResult<List<PurposeDto>> GetAllPurposes()
         {
             var purposes = _purposeService.GetAllPurposes();
 

@@ -25,7 +25,7 @@ namespace BudgetManagementBackend.API.Controllers
 
         // GET api/user/{userId}/transactions
         [Route("~/api/user/{userId}/transactions")]
-        [HttpGet]
+        [HttpPost]
         public ActionResult<List<TransactionReadDto>> GetAllTransactionsByUser(int userId)
         {
             var transactions = _transactionService.GetAllTransactionByUser(userId);
@@ -37,7 +37,7 @@ namespace BudgetManagementBackend.API.Controllers
 
         // GET api/user/{userId}/transactions/{id}
         [Route("~/api/user/{userId}/transactions/{id}")]
-        [HttpGet]
+        [HttpPost]
         public ActionResult<TransactionReadDto> GetTransactionById(int userId, int id)
         {
             var transaction = _transactionService.GetTransactionById(userId, id);
@@ -49,7 +49,7 @@ namespace BudgetManagementBackend.API.Controllers
 
         // GET api/user/{userId}/transactionItemsToFilter
         [Route("~/api/user/{userId}/transactionItemsToFilter")]
-        [HttpGet]
+        [HttpPost]
         public ActionResult<List<TransactionReadDto>> GetFilteredTransactionItemsByUser(int userId,
             [FromQuery] FilterParams filterParams)
         {

@@ -4,7 +4,7 @@ import { environment } from 'src/environments/environment';
 import { first, map, switchMap, take, tap } from 'rxjs/operators';
 import { User } from './user.model';
 import { BehaviorSubject, from } from 'rxjs';
-import { Storage } from '@capacitor/storage';
+import { Preferences } from '@capacitor/preferences';
 
 interface ResponseData {
   userId: number;
@@ -137,23 +137,26 @@ export class AuthService {
       }),
       take(1),
       switchMap(() => {
-        return this.http.put(this.apiUrl + `user/${id}`, {
-          firstName: requestData.firstName,
-          lastName: requestData.lastName,
-          email: requestData.email,
-          username: requestData.username
-        },
-        {
-          responseType: 'text'
-        });
+        return this.http.put(
+          this.apiUrl + `user/${id}`,
+          {
+            firstName: requestData.firstName,
+            lastName: requestData.lastName,
+            email: requestData.email,
+            username: requestData.username,
+          },
+          {
+            responseType: 'text',
+          }
+        );
       }),
-      tap(response => {
+      tap((response) => {
         if (response.toLowerCase().includes('success')) {
           userToUpdate.firstName = requestData.firstName;
           userToUpdate.lastName = requestData.lastName;
           userToUpdate.email = requestData.email;
           userToUpdate.username = requestData.username;
-  
+
           this.storeAuthData(
             userToUpdate.userId,
             userToUpdate.username,
@@ -166,14 +169,14 @@ export class AuthService {
 
           this._user.next(userToUpdate);
         }
-        
+
         return response;
       })
     );
   }
 
   autoLogin() {
-    return from(Storage.get({ key: 'authData' })).pipe(
+    return from(Preferences.get({ key: 'authData' })).pipe(
       map((storedData) => {
         if (!storedData || !storedData.value) {
           return null;
@@ -230,11 +233,11 @@ export class AuthService {
       role: role,
       token: token,
     });
-    Storage.set({ key: 'authData', value: data });
+    Preferences.set({ key: 'authData', value: data });
   }
 
   logout() {
     this._user.next(null);
-    Storage.remove({ key: 'authData' });
+    Preferences.remove({ key: 'authData' });
   }
 }

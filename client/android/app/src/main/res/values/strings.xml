@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ionic-budget-management</string>
+    <string name="title_activity_main">ionic-budget-management</string>
+    <string name="package_name">io.budget.management.MR</string>
+    <string name="custom_url_scheme">io.budget.management.MR</string>
+</resources>

@@ -19,7 +19,7 @@ export class JwtInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if (!request.url.includes('localhost')) return next.handle(request);
+    if (request.url.includes('cloudinary')) return next.handle(request);
 
     let currentUser: User | undefined;
 
@@ -30,6 +30,8 @@ export class JwtInterceptor implements HttpInterceptor {
     if (currentUser) {
       request = request.clone({
         setHeaders: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${currentUser.token}`,
         },
       });
