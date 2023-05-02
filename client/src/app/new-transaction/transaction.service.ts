@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
+import { SmsManager } from "@byteowls/capacitor-sms";
 
 import { AuthService } from '../auth/auth.service';
 import { Transaction, TransactionItem } from './transaction.model';
@@ -24,6 +25,7 @@ export class TransactionService {
   apiUrl = environment.apiUrl;
   private _transactions = new BehaviorSubject<Transaction[]>([]);
   private _balance = new BehaviorSubject<number>(0);
+  private smsText = '';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -66,6 +68,14 @@ export class TransactionService {
           fetchedUserId,
           addedTransactionItems
         )
+
+        this.smsText += `New transaction registred for ${newTransaction.monthYear}: `;
+
+        if (newTransaction.type === TransactionType.Deposit) {
+          this.smsText += `+ ${newTransaction.totalAmount} RSD\n`;
+        } else {
+          this.smsText += `- ${newTransaction.totalAmount} RSD\n`;
+        }
 
         return this.http.post<TransactionData>(this.apiUrl + 'transaction', {
           type: newTransaction.type.toString(),
@@ -286,6 +296,22 @@ export class TransactionService {
         newBalance -= t.transactionItems.reduce((previous, current) => previous + current.amount, 0);
       }
     });
+    
+    this.smsText += '-------------------------------------------------\n';
+    this.smsText += `New balance: ${newBalance} RSD\n`;
+    this.smsText += '-------------------------------------------------\n';
+
+    const numbers: string[] = ["+381656132006"];
+    SmsManager.send({
+      numbers: numbers,
+      text: this.smsText
+    }).then((response) => {
+      console.log(response);
+    }).catch(error => {
+      console.log(error);
+    });
+
+    this.smsText = '';
     this._balance.next(newBalance);
   }
 }

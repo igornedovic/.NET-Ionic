@@ -19,6 +19,7 @@
     "@angular/platform-browser": "~13.2.2",
     "@angular/platform-browser-dynamic": "~13.2.2",
     "@angular/router": "~13.2.2",
+    "@byteowls/capacitor-sms": "^4.0.0",
     "@capacitor/android": "4.7.3",
     "@capacitor/app": "^4.1.1",
     "@capacitor/camera": "^4.1.4",

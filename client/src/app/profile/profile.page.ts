@@ -55,7 +55,7 @@ export class ProfilePage implements OnInit, OnDestroy {
 
     this.loadingCtrl
       .create({
-        message: 'Updating transaction...',
+        message: 'Updating profile...',
       })
       .then((loadingEl) => {
         loadingEl.present();
