@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { SmsManager } from "@byteowls/capacitor-sms";
+import { SmsManager } from '@byteowls/capacitor-sms';
 
 import { AuthService } from '../auth/auth.service';
 import { Transaction, TransactionItem } from './transaction.model';
@@ -48,7 +48,10 @@ export class TransactionService {
     );
   }
 
-  addTransaction(transactionData: TransactionData, addedTransactionItems: TransactionItem[]) {
+  addTransaction(
+    transactionData: TransactionData,
+    addedTransactionItems: TransactionItem[]
+  ) {
     let fetchedUserId: number;
     let newTransaction: Transaction;
     let generatedId: number;
@@ -67,7 +70,7 @@ export class TransactionService {
           +transactionData.totalAmount,
           fetchedUserId,
           addedTransactionItems
-        )
+        );
 
         this.smsText += `New transaction registred for ${newTransaction.monthYear}: `;
 
@@ -82,14 +85,14 @@ export class TransactionService {
           monthYear: newTransaction.monthYear,
           totalAmount: newTransaction.totalAmount,
           userId: newTransaction.userId,
-          transactionItems: newTransaction.transactionItems.map(ti => {
+          transactionItems: newTransaction.transactionItems.map((ti) => {
             return {
               date: ti.date,
               amount: ti.amount,
               imageUrl: ti.imageUrl,
-              purposeId: ti.purpose.purposeId
-            }
-          })
+              purposeId: ti.purpose.purposeId,
+            };
+          }),
         });
       }),
       take(1),
@@ -118,7 +121,8 @@ export class TransactionService {
       take(1),
       switchMap(() => {
         return this.http.post<TransactionData[]>(
-          this.apiUrl + `user/${fetchedUserId}/transactions`, {}
+          this.apiUrl + `user/${fetchedUserId}/transactions`,
+          {}
         );
       }),
       map((transactionsResponse) => {
@@ -157,7 +161,8 @@ export class TransactionService {
       take(1),
       switchMap(() => {
         return this.http.post<TransactionData>(
-          this.apiUrl + `user/${fetchedUserId}/transactions/${id}`, {}
+          this.apiUrl + `user/${fetchedUserId}/transactions/${id}`,
+          {}
         );
       }),
       map((transactionsResponse) => {
@@ -190,14 +195,15 @@ export class TransactionService {
       switchMap(() => {
         return this.http.post<TransactionData[]>(
           this.apiUrl +
-            `user/${fetchedUserId}/transactionItemsToFilter?fromDate=${fromDate}&toDate=${toDate}&minAmount=${minAmount}&maxAmount=${maxAmount}`, {}
+            `user/${fetchedUserId}/transactionItemsToFilter?fromDate=${fromDate}&toDate=${toDate}&minAmount=${minAmount}&maxAmount=${maxAmount}`,
+          {}
         );
       }),
-      map(transactionResponse => {
+      map((transactionResponse) => {
         const transactionItems: TransactionItem[] = [];
 
-        transactionResponse.forEach(t => {
-          t.transactionItems.forEach(ti => {
+        transactionResponse.forEach((t) => {
+          t.transactionItems.forEach((ti) => {
             transactionItems.push(
               new TransactionItem(
                 ti.transactionItemId,
@@ -206,16 +212,20 @@ export class TransactionService {
                 ti.imageUrl,
                 ti.purpose
               )
-            )
-          })
-        })
+            );
+          });
+        });
 
         return transactionItems;
       })
     );
   }
 
-  updateTransaction(id: number, transactionData: TransactionData, addedTransactionItems: TransactionItem[]) {
+  updateTransaction(
+    id: number,
+    transactionData: TransactionData,
+    addedTransactionItems: TransactionItem[]
+  ) {
     let updatedTransactions: Transaction[];
     return this.transactions.pipe(
       take(1),
@@ -245,16 +255,19 @@ export class TransactionService {
           {
             type: updatedTransactions[updatedTransactionIndex].type.toString(),
             monthYear: updatedTransactions[updatedTransactionIndex].monthYear,
-            totalAmount: updatedTransactions[updatedTransactionIndex].totalAmount,
+            totalAmount:
+              updatedTransactions[updatedTransactionIndex].totalAmount,
             userId: updatedTransactions[updatedTransactionIndex].userId,
-            transactionItems: updatedTransactions[updatedTransactionIndex].transactionItems.map(ti => {
+            transactionItems: updatedTransactions[
+              updatedTransactionIndex
+            ].transactionItems.map((ti) => {
               return {
                 date: ti.date,
                 amount: ti.amount,
                 imageUrl: ti.imageUrl,
-                purposeId: ti.purpose.purposeId
-              }
-            })
+                purposeId: ti.purpose.purposeId,
+              };
+            }),
           },
           { responseType: 'text' }
         );
@@ -291,25 +304,33 @@ export class TransactionService {
     let newBalance = 0;
     transactions.forEach((t) => {
       if (t.type === TransactionType.Deposit) {
-        newBalance += t.transactionItems.reduce((previous, current) => previous + current.amount, 0);
+        newBalance += t.transactionItems.reduce(
+          (previous, current) => previous + current.amount,
+          0
+        );
       } else {
-        newBalance -= t.transactionItems.reduce((previous, current) => previous + current.amount, 0);
+        newBalance -= t.transactionItems.reduce(
+          (previous, current) => previous + current.amount,
+          0
+        );
       }
     });
-    
+
     this.smsText += '-------------------------------------------------\n';
-    this.smsText += `New balance: ${newBalance} RSD\n`;
+    this.smsText += `New balance: ${newBalance.toFixed(2)} RSD\n`;
     this.smsText += '-------------------------------------------------\n';
 
-    const numbers: string[] = ["+381656132006"];
+    const numbers: string[] = ['+381656132006'];
     SmsManager.send({
       numbers: numbers,
-      text: this.smsText
-    }).then((response) => {
-      console.log(response);
-    }).catch(error => {
-      console.log(error);
-    });
+      text: this.smsText,
+    })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
     this.smsText = '';
     this._balance.next(newBalance);
